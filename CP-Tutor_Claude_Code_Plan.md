@@ -1274,7 +1274,7 @@ main().catch(console.error).finally(() => prisma.$disconnect())
 3. Tạo `apps/web/app/(auth)/layout.tsx` — layout không có Navbar (chỉ render `{children}`)
 4. Tạo `components/layout/Navbar.tsx`:
    - Logo `>_` + "CP-Tutor" → `/problems`
-   - Nav: "Bài tập", "Nộp bài của tôi", [Admin nếu role=admin]
+   - Nav: "Bài tập", "Bài nộp của tôi", [Admin nếu role=admin]
    - Right: username + avatar (initials) + dropdown "Đăng xuất" (`signOut()`)
    - Variant: class `compact-topbar` cho trang giải bài
 5. Tạo `components/ui/Badge.tsx` — verdict badges theo class `.badge.ac/wa/tle/mle/ce/re/pending`

@@ -28,7 +28,7 @@ export default function Navbar({ compact }: NavbarProps) {
             Bài tập
           </Link>
           <Link href="/submissions" className={pathname.startsWith('/submissions') ? 'active' : ''}>
-            Nộp bài của tôi
+            Bài nộp của tôi
           </Link>
           {session?.user?.role === 'admin' && (
             <Link href="/admin/problems" className={pathname.startsWith('/admin') ? 'active' : ''}>

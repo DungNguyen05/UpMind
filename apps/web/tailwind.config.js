@@ -21,8 +21,8 @@ module.exports = {
         warning: '#ffb340',
       },
       fontFamily: {
-        display: ['JetBrains Mono', 'IBM Plex Mono', 'ui-monospace', 'monospace'],
-        body: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'system-ui', 'sans-serif'],
+        display: ['Be Vietnam Pro', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'system-ui', 'sans-serif'],
+        body: ['Be Vietnam Pro', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'system-ui', 'sans-serif'],
         mono: ['JetBrains Mono', 'IBM Plex Mono', 'ui-monospace', 'monospace'],
       },
       borderRadius: {

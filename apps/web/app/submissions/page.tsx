@@ -38,7 +38,7 @@ export default function SubmissionsPage() {
       <Navbar />
       <main className="main">
         <div className="page-head">
-          <div className="page-title"><h1>Nộp bài của tôi</h1></div>
+          <div className="page-title"><h1>Bài nộp của tôi</h1></div>
           <span className="stat-chip">Tổng <strong>{total}</strong></span>
         </div>
 
