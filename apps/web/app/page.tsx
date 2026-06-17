@@ -106,22 +106,29 @@ export default function LandingPage() {
                   </div>
                   <div className="signature">#include</div>
                 </div>
-                <div className="lp-card">
-                  <div className="lp-code-title">
-                    <span>solution.cpp</span>
-                    <span className="cpp-pill">C++17</span>
-                  </div>
-                  <div className="lp-code-line"><span>01</span><b style={{width:'76%',background:'#bbb8ff'}}></b></div>
-                  <div className="lp-code-line"><span>02</span><b style={{width:'55%',background:'#6e748d'}}></b></div>
-                  <div className="lp-code-line"><span>03</span><b style={{width:'86%',background:'#00d2a0'}}></b></div>
-                  <div className="lp-code-line"><span>04</span><b style={{width:'44%',background:'#ffb340'}}></b></div>
+                <div className="code-card">
+                  <div className="code-title"><span>solution.cpp</span><span className="cpp-pill">C++17</span></div>
+                  <div className="code-line is-ok"><span>01</span><b style={{width:'76%',background:'#bbb8ff'}}></b><em></em></div>
+                  <div className="code-line"><span>02</span><b style={{width:'55%',background:'#6e748d'}}></b><em></em></div>
+                  <div className="code-line is-ok"><span>03</span><b style={{width:'86%',background:'#00d2a0'}}></b><em></em></div>
+                  <div className="code-line is-flagged"><span>04</span><b style={{width:'70%',background:'#ffb340'}}></b><em></em></div>
+                  <div className="code-line"><span>05</span><b style={{width:'48%',background:'#6e748d'}}></b><em></em></div>
                 </div>
                 <div className="ai-card">
-                  <strong><span>AI Mentor</span><span>AC</span></strong>
-                  <p>Phân tích độ phức tạp, chỉ ra lỗi biên và gợi ý hướng tối ưu.</p>
+                  <strong><span>AI Mentor</span><span>REVIEW</span></strong>
+                  <p>Đang đối chiếu dòng 04 với testcase fail và tạo hint theo tầng.</p>
+                  <small>Boundary case</small>
                   <div className="ai-progress"><span></span><span></span><span></span></div>
                 </div>
-                <div className="verdict-chip"><span>AC</span> 124ms · 8.2MB</div>
+                <div className="review-stack">
+                  <div className="hint-stack">
+                    <div className="hint-mini">Hint 1 · thử input nhỏ</div>
+                    <div className="hint-mini">Hint 2 · invariant sai</div>
+                    <div className="hint-mini">Trace · test 7</div>
+                  </div>
+                  <div className="verdict-chip"><span>WA</span> Test 7</div>
+                  <div className="trace-chip"><span>tracking</span><small>line 04 → output diff</small></div>
+                </div>
               </div>
             </div>
           </section>
