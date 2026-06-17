@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CP-Tutor — Landing Preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700;800;900&amp;family=Be+Vietnam+Pro:wght@400;500;700;800;850;900&amp;display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --page: #0f1117;
+      --hero: #121622;
+      --hero-soft: #171a24;
+      --ink: #e8eaf0;
+      --muted: #8b92a8;
+      --faint: #555b70;
+      --mint: #00d2a0;
+      --accent: #6c63ff;
+      --danger: #ff5c6c;
+      --warning: #ffb340;
+      --code-bg: #0f1117;
+      --code-surface: #1a1d27;
+      --code-elevated: #21263a;
+      --code-border: #2e3348;
+      --code-fg: #e8eaf0;
+      --code-muted: #8b92a8;
+      --font-body: "Be Vietnam Pro","Inter",system-ui,sans-serif;
+      --font-mono: "JetBrains Mono",ui-monospace,monospace;
+    }
+    * { box-sizing: border-box; }
+    html { background: var(--page); color: var(--ink); color-scheme: dark; }
+    body {
+      margin: 0;
+      font: 14px/1.55 var(--font-body);
+      -webkit-font-smoothing: antialiased;
+      background:
+        radial-gradient(circle at 18% 8%, rgba(108,99,255,.18), transparent 28vw),
+        radial-gradient(circle at 86% 18%, rgba(0,210,160,.13), transparent 26vw),
+        linear-gradient(180deg, #0f1117, #121622);
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; cursor: pointer; border: none; }
+
+    /* ── HERO SHELL ── */
+    .hero-shell {
+      position: relative;
+      width: 100%;
+      margin: 0;
+      border-radius: 0;
+      background:
+        radial-gradient(circle at 74% 44%, rgba(108,99,255,.17), transparent 29%),
+        radial-gradient(circle at 72% 48%, rgba(0,210,160,.10), transparent 36%),
+        linear-gradient(180deg, rgba(18,22,34,.98), rgba(15,17,23,.98));
+      border: 1px solid rgba(46,51,72,.72);
+      box-shadow: 0 26px 90px rgba(0,0,0,.34);
+      overflow: hidden;
+    }
+    .hero-stage {
+      position: relative;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+    .side-orb {
+      position: absolute; left: -74px; top: 27%;
+      width: 132px; height: 310px; border-radius: 18px;
+      background: linear-gradient(180deg,var(--accent),color-mix(in oklab,var(--mint) 66%,var(--accent)));
+      box-shadow: 0 0 70px rgba(108,99,255,.28),0 0 54px rgba(0,210,160,.12);
+      z-index: 1;
+    }
+    .hero-stage::after {
+      content:""; position:absolute; inset:auto 0 0;
+      height:156px; border-top:1px solid rgba(46,51,72,.78);
+      background:linear-gradient(180deg,rgba(26,29,39,.54),rgba(15,17,23,.82));
+      pointer-events:none;
+    }
+
+    /* ── NAV ── */
+    .nav {
+      position:relative; z-index:5;
+      display:grid; grid-template-columns:auto 1fr auto;
+      align-items:center; gap:24px;
+      width:min(1680px,calc(100% - 96px));
+      margin:clamp(22px,3vw,42px) auto 0;
+    }
+    .brand { display:inline-flex; align-items:center; gap:10px; width:fit-content; font:850 14px/1 var(--font-mono); }
+    .brand-mark { display:grid; place-items:center; width:38px; height:38px; border-radius:4px; border:1px solid var(--code-border); background:color-mix(in oklab,var(--code-surface) 88%,transparent); color:var(--accent); }
+    .links { justify-self:center; display:inline-flex; align-items:center; gap:42px; color:var(--muted); font:760 14px/1 var(--font-body); }
+    .nav-auth { justify-self:end; display:inline-flex; align-items:center; gap:10px; }
+    .nav-login { display:inline-flex; align-items:center; justify-content:center; min-height:38px; padding:0 16px; border-radius:8px; color:var(--muted); font:850 13px/1 var(--font-body); }
+    .nav-cta { justify-self:end; display:inline-flex; align-items:center; justify-content:center; min-height:38px; padding:0 18px; border-radius:8px; border:1px solid color-mix(in oklab,var(--accent) 48%,var(--code-border)); background:color-mix(in oklab,var(--accent) 16%,var(--code-surface)); color:var(--ink); font:850 13px/1 var(--font-body); }
+
+    /* ── HERO GRID ── */
+    .hero-grid {
+      position:relative; z-index:3;
+      display:grid; grid-template-columns:minmax(430px,.82fr) minmax(650px,1.18fr);
+      align-items:center; gap:clamp(28px,5vw,110px);
+      width:min(1560px,calc(100% - 120px));
+      min-height:calc(100vh - 116px); margin:18px auto 0; padding-bottom:116px;
+    }
+    .copy { align-self:center; padding-top:38px; }
+    .kicker { display:inline-flex; align-items:center; gap:9px; padding:10px 13px; border:1px solid rgba(108,99,255,.34); border-radius:8px; background:rgba(108,99,255,.14); color:#bbb8ff; font:900 12px/1 var(--font-mono); letter-spacing:.28em; text-transform:uppercase; }
+    .kicker::before { content:""; width:7px; height:7px; border-radius:50%; background:var(--mint); box-shadow:0 0 16px rgba(0,210,160,.72); }
+    h1 { margin:26px 0 0; max-width:570px; font:520 clamp(46px,5.1vw,78px)/1.04 var(--font-body); letter-spacing:0; text-wrap:balance; }
+    .lead { margin:23px 0 0; max-width:460px; color:var(--muted); font-size:17px; line-height:1.7; }
+    .actions { display:flex; align-items:center; gap:14px; margin-top:54px; }
+    .btn { display:inline-flex; align-items:center; justify-content:center; min-height:50px; padding:0 22px; border:0; border-radius:8px; font:850 15px/1 var(--font-body); transition:transform 160ms,box-shadow 160ms; }
+    .btn:active { transform:translateY(1px); }
+    .btn-primary { background:var(--accent); color:var(--page); box-shadow:0 16px 34px rgba(108,99,255,.28); }
+    .btn-secondary { border:1px solid var(--code-border); background:color-mix(in oklab,var(--code-surface) 92%,transparent); color:var(--ink); }
+
+    /* ── VISUAL ── */
+    .visual { position:relative; min-height:660px; display:grid; place-items:center; perspective:1100px; isolation:isolate; }
+    .visual-halo { position:absolute; width:min(680px,96%); aspect-ratio:1; border-radius:50%; background:radial-gradient(circle at 48% 42%,rgba(108,99,255,.22),rgba(33,38,58,.74) 58%,rgba(15,17,23,.42) 100%); border:1px solid rgba(66,73,98,.56); }
+    .judge-3d { --rig-scale: 1.3; position:relative; z-index:2; width:min(460px,82vw); height:440px; transform-style:preserve-3d; transform:rotateX(58deg) rotateZ(-28deg) scale(var(--rig-scale)); animation:floatRig 6s ease-in-out infinite; }
+    .platform { position:absolute; left:68px; bottom:48px; width:326px; height:220px; border-radius:42px; background:linear-gradient(135deg,rgba(33,38,58,.98),rgba(15,17,23,.94)); transform:translateZ(0); box-shadow:inset 0 0 0 1px rgba(66,73,98,.78),inset -18px -24px 46px rgba(0,0,0,.22),0 52px 78px rgba(0,0,0,.28); }
+    .platform::before { content:""; position:absolute; inset:-18px 10px auto; height:72px; border-radius:inherit; border:2px solid rgba(108,99,255,.54); border-bottom-color:rgba(0,210,160,.28); transform:translateZ(20px); pointer-events:none; }
+    .orbit { position:absolute; left:20px; top:184px; width:420px; height:188px; border:13px solid rgba(108,99,255,.36); border-left-color:rgba(0,210,160,.16); border-right-color:rgba(187,184,255,.58); border-radius:50%; transform:translateZ(58px) rotateZ(4deg); animation:orbitShift 4.8s ease-in-out infinite; }
+    .code-card, .ai-card, .verdict-chip, .mentor-orb, .doc-card { position:absolute; transform-style:preserve-3d; box-shadow:0 22px 44px rgba(0,0,0,.32); }
+    .doc-card { left:214px; top:38px; width:142px; height:178px; padding:18px; border-radius:22px; background:linear-gradient(160deg,var(--code-surface),#151924); transform:translateZ(118px) rotateX(-58deg) rotateZ(28deg) rotateY(-9deg); border:1px solid var(--code-border); animation:bobDoc 5.2s ease-in-out infinite; }
+    .doc-head { display:flex; align-items:center; gap:9px; color:var(--code-fg); font:850 10px/1 var(--font-mono); text-transform:uppercase; }
+    .doc-icon { display:grid; place-items:center; width:34px; height:34px; border-radius:50%; background:color-mix(in oklab,var(--accent) 84%,var(--mint)); color:var(--page); }
+    .doc-lines { display:grid; gap:10px; margin-top:16px; }
+    .doc-lines span { display:block; height:7px; border-radius:999px; background:#5b6280; }
+    .doc-lines span:nth-child(1){width:74%} .doc-lines span:nth-child(2){width:56%} .doc-lines span:nth-child(3){width:84%;background:#00d2a0}
+    .signature { margin-top:17px; color:var(--accent); font:900 20px/1 var(--font-mono); letter-spacing:-.08em; transform:rotate(-8deg); }
+    .code-card { left:116px; top:118px; width:184px; height:134px; padding:12px; border:1px solid var(--code-border); border-radius:12px; background:var(--code-bg); transform:translateZ(88px) rotateX(-58deg) rotateZ(28deg) rotateY(7deg); animation:bobCode 4.6s ease-in-out infinite; }
+    .code-title { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:12px; color:var(--code-muted); font:800 10px/1 var(--font-mono); }
+    .cpp-pill { padding:4px 6px; border-radius:4px; background:rgba(108,99,255,.18); color:#bbb8ff; }
+    .code-line { display:grid; grid-template-columns:18px 1fr; gap:8px; color:var(--code-muted); font:700 9px/1.55 var(--font-mono); }
+    .code-line b { min-width:40px; height:6px; align-self:center; border-radius:999px; }
+    .mentor-orb { left:78px; top:78px; width:96px; height:96px; border-radius:50%; background:radial-gradient(circle at 34% 26%,#96ffea,transparent 18%),conic-gradient(from 120deg,#00d2a0,#7af4df,#09b990,#00d2a0); transform:translateZ(132px); animation:spinOrb 8s linear infinite,bobOrb 5s ease-in-out infinite; overflow:hidden; }
+    .mentor-orb::before { content:""; position:absolute; inset:14px; border-radius:inherit; border:2px solid rgba(232,234,240,.28); }
+    .ai-card { right:36px; bottom:86px; width:164px; min-height:112px; padding:13px; border-radius:16px; background:color-mix(in oklab,var(--code-surface) 92%,transparent); border:1px solid color-mix(in oklab,var(--mint) 34%,var(--code-border)); transform:translateZ(106px) rotateX(-58deg) rotateZ(28deg) rotateY(-7deg); animation:bobAi 5.8s ease-in-out infinite; }
+    .ai-card strong { display:flex; align-items:center; justify-content:space-between; color:var(--code-fg); font:900 11px/1 var(--font-mono); }
+    .ai-card p { margin:10px 0 0; color:var(--code-muted); font:700 10px/1.45 var(--font-body); }
+    .ai-progress { display:grid; grid-template-columns:1fr 1fr 1fr; gap:4px; margin-top:12px; }
+    .ai-progress span { height:6px; border-radius:999px; background:var(--mint); opacity:.28; animation:blink 1.6s ease-in-out infinite; }
+    .ai-progress span:nth-child(2){animation-delay:.18s} .ai-progress span:nth-child(3){animation-delay:.36s}
+    .verdict-chip { left:220px; bottom:38px; display:inline-flex; align-items:center; gap:10px; height:44px; padding:0 14px; border-radius:12px; background:var(--code-elevated); color:var(--code-fg); border:1px solid var(--code-border); transform:translateZ(104px) rotateX(-58deg) rotateZ(28deg); font:900 11px/1 var(--font-mono); animation:verdictPulse 2.2s ease-in-out infinite; }
+    .verdict-chip span { color:var(--mint); text-shadow:0 0 14px rgba(0,210,160,.44); }
+    /* ── TRUST ROW ── */
+    .trust-row { position:absolute; left:0; right:0; bottom:0; z-index:4; height:156px; display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); align-items:center; gap:10px; width:min(1018px,calc(100% - 88px)); margin:0 auto; color:var(--muted); font:900 12px/1 var(--font-mono); text-transform:uppercase; letter-spacing:.02em; }
+    .trust-row span { display:inline-flex; align-items:center; justify-content:center; min-height:46px; border-radius:999px; opacity:.78; }
+    .trust-row b { display:inline-block; width:9px; height:9px; margin-right:8px; border-radius:50%; background:currentColor; }
+
+    /* ── LANDING CTA ── */
+    .landing-cta { position:relative; z-index:2; min-height:100vh; display:grid; place-items:center; align-content:center; padding:clamp(96px,10vw,150px) clamp(28px,6vw,96px); border-top:1px solid rgba(46,51,72,.36); background:radial-gradient(circle at 50% 18%,rgba(108,99,255,.24),transparent 42vw),radial-gradient(circle at 38% 78%,rgba(0,210,160,.11),transparent 34vw),linear-gradient(180deg,#121622,#0f1117 68%); text-align:center; }
+    .landing-cta h2 { max-width:980px; margin:0 auto; color:var(--ink); font:850 clamp(38px,4.9vw,78px)/1 var(--font-body); text-wrap:balance; letter-spacing:-.02em; }
+    .landing-cta p { max-width:720px; margin:28px auto 0; color:var(--muted); font-size:18px; line-height:1.72; }
+    .cta-actions { justify-content:center; margin-top:34px; }
+
+    /* ── HERO KEYFRAMES ── */
+    @keyframes floatRig { 0%,100%{transform:rotateX(58deg) rotateZ(-28deg) scale(var(--rig-scale)) translate3d(0,0,0)} 50%{transform:rotateX(58deg) rotateZ(-28deg) scale(var(--rig-scale)) translate3d(0,-13px,26px)} }
+    @keyframes orbitShift { 0%,100%{transform:translateZ(58px) rotateZ(4deg) translateX(0);opacity:.78} 50%{transform:translateZ(72px) rotateZ(-2deg) translateX(8px);opacity:1} }
+    @keyframes bobDoc { 0%,100%{transform:translateZ(118px) rotateX(-58deg) rotateZ(28deg) rotateY(-9deg) translateY(0)} 50%{transform:translateZ(132px) rotateX(-58deg) rotateZ(28deg) rotateY(-9deg) translateY(-8px)} }
+    @keyframes bobCode { 0%,100%{transform:translateZ(88px) rotateX(-58deg) rotateZ(28deg) rotateY(7deg) translateY(0)} 50%{transform:translateZ(102px) rotateX(-58deg) rotateZ(28deg) rotateY(7deg) translateY(7px)} }
+    @keyframes bobAi { 0%,100%{transform:translateZ(106px) rotateX(-58deg) rotateZ(28deg) rotateY(-7deg) translateY(0)} 50%{transform:translateZ(124px) rotateX(-58deg) rotateZ(28deg) rotateY(-7deg) translateY(-7px)} }
+    @keyframes spinOrb { from{rotate:0deg} to{rotate:360deg} }
+    @keyframes bobOrb { 0%,100%{transform:translateZ(132px) translateY(0)} 50%{transform:translateZ(150px) translateY(-12px)} }
+    @keyframes blink { 0%,100%{opacity:.28;transform:scaleX(.72)} 50%{opacity:1;transform:scaleX(1)} }
+    @keyframes verdictPulse { 0%,100%{box-shadow:0 22px 44px rgba(0,0,0,.32),0 0 0 rgba(0,210,160,0)} 50%{box-shadow:0 22px 44px rgba(0,0,0,.32),0 0 0 7px rgba(0,210,160,.12)} }
+    /* ── FEATURES SCROLL ── */
+    .feat-scroll {
+      position: relative;
+      height: 500vh;
+      background:
+        linear-gradient(180deg,#0f1117,#121622);
+      border-top: 1px solid rgba(46,51,72,.32);
+    }
+    .feat-viewport {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      display: grid;
+      grid-template-columns: minmax(430px, 46%) 1fr;
+      overflow: hidden;
+    }
+    .feat-viewport::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 76% 24%, rgba(108,99,255,.16), transparent 34vw),
+        radial-gradient(circle at 22% 58%, rgba(0,210,160,.07), transparent 28vw),
+        linear-gradient(90deg, rgba(15,17,23,.98) 0%, rgba(16,19,29,.96) 42%, rgba(17,21,32,.96) 58%, rgba(18,22,34,.98) 100%);
+    }
+    .feat-left {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0 clamp(48px,5vw,92px) 0 clamp(86px,8vw,190px);
+      border-right: 0;
+      background: transparent;
+    }
+    .feat-left::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: -68px;
+      width: 136px;
+      height: 100%;
+      pointer-events: none;
+      display: none;
+    }
+    .feat-section-label {
+      color: #bbb8ff;
+      font: 900 11px/1 var(--font-mono);
+      letter-spacing: .26em;
+      text-transform: uppercase;
+      margin-bottom: 32px;
+    }
+    .feat-texts {
+      position: relative;
+      min-height: 320px;
+      max-width: 460px;
+    }
+    .feat-text {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 480ms ease, transform 480ms ease;
+      pointer-events: none;
+    }
+    .feat-text.is-active {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+    .feat-step-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--mint);
+      font: 900 11px/1 var(--font-mono);
+      letter-spacing: .09em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .feat-step-tag .step-num {
+      display: grid;
+      place-items: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 4px;
+      background: rgba(0,210,160,.15);
+      color: var(--mint);
+      font-size: 10px;
+    }
+    .feat-title {
+      margin: 0 0 18px;
+      color: var(--ink);
+      font: 820 clamp(26px,2.6vw,40px)/1.12 var(--font-body);
+      max-width: 420px;
+      text-wrap: balance;
+    }
+    .feat-body {
+      margin: 0 0 22px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.75;
+      max-width: 400px;
+    }
+    .feat-bullets { list-style: none; padding: 0; margin: 0; display: grid; gap: 9px; }
+    .feat-bullets li { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 13.5px; }
+    .feat-bullets li::before { content: ""; flex-shrink: 0; width: 6px; height: 6px; border-radius: 50%; background: var(--mint); box-shadow: 0 0 8px rgba(0,210,160,.6); }
+    .feat-progress { display: flex; align-items: center; gap: 8px; margin-top: 38px; }
+    .feat-dot { height: 8px; border-radius: 4px; background: var(--faint); width: 8px; padding: 0; transition: width 350ms ease, background 350ms ease; }
+    .feat-dot.is-active { width: 28px; background: var(--mint); }
+    .feat-right {
+      position: relative;
+      z-index: 1;
+      background: transparent;
+    }
+    .feat-anim {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px clamp(20px,4vw,60px);
+      opacity: 0;
+      transition: opacity 500ms ease;
+      pointer-events: none;
+    }
+    .feat-anim.is-active { opacity: 1; pointer-events: auto; }
+
+    /* ── ANIM 0: CODE SCANNER ── */
+    .anim-scanner { width: 100%; max-width: 540px; }
+    .scanner-label { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; color: var(--code-muted); font: 800 11px/1 var(--font-mono); text-transform: uppercase; letter-spacing: .1em; }
+    .scanner-label .sl-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--mint); box-shadow: 0 0 10px rgba(0,210,160,.8); animation: sl-pulse 1.4s ease-in-out infinite; animation-play-state: paused; }
+    .feat-anim[data-step="0"].is-active .sl-dot { animation-play-state: running; }
+    @keyframes sl-pulse { 0%,100% { opacity:.4; transform:scale(.8); } 50% { opacity:1; transform:scale(1.1); } }
+    .scanner-editor { border-radius: 14px; border: 1px solid var(--code-border); background: var(--code-bg); overflow: hidden; box-shadow: 0 32px 80px rgba(0,0,0,.5), 0 0 0 1px rgba(46,51,72,.6); }
+    .se-titlebar { display: flex; align-items: center; gap: 8px; padding: 11px 16px; background: var(--code-surface); border-bottom: 1px solid var(--code-border); }
+    .se-dots { display: flex; gap: 6px; }
+    .se-dots span { width: 11px; height: 11px; border-radius: 50%; }
+    .se-dots span:nth-child(1) { background: #ff5c6c; }
+    .se-dots span:nth-child(2) { background: #ffb340; }
+    .se-dots span:nth-child(3) { background: #00d2a0; }
+    .se-filename { margin-left: 8px; color: var(--code-muted); font: 800 12px/1 var(--font-mono); }
+    .se-lang { margin-left: auto; padding: 3px 8px; border-radius: 4px; background: rgba(108,99,255,.18); color: #bbb8ff; font: 900 10px/1 var(--font-mono); }
+    .se-body { position: relative; padding: 12px 0 16px; }
+    .se-scanbar { position: absolute; left: 0; right: 0; height: 36px; background: rgba(108,99,255,.13); border-left: 3px solid var(--accent); transform: translateY(0); z-index: 1; animation: scanMove 7s cubic-bezier(.4,0,.2,1) infinite; animation-play-state: paused; }
+    .feat-anim[data-step="0"].is-active .se-scanbar { animation-play-state: running; }
+    @keyframes scanMove {
+      0%      { transform:translateY(0);    border-left-color:var(--accent); background:rgba(108,99,255,.13); }
+      14%     { transform:translateY(36px); border-left-color:var(--accent); background:rgba(108,99,255,.13); }
+      27%     { transform:translateY(72px); border-left-color:var(--accent); background:rgba(108,99,255,.13); }
+      38%,72% { transform:translateY(108px); border-left-color:var(--danger); background:rgba(255,92,108,.18); }
+      84%     { transform:translateY(108px); opacity:0; }
+      85%     { transform:translateY(0); opacity:0; border-left-color:var(--accent); background:rgba(108,99,255,.13); }
+      100%    { transform:translateY(0); opacity:1; }
+    }
+    .se-lines { position: relative; z-index: 2; }
+    .se-line { display: flex; align-items: center; height: 36px; padding: 0 16px; font: 800 12px/1 var(--font-mono); transition: background 300ms, color 300ms; gap: 0; }
+    .se-line.is-bug-line { animation: bugLineFlash 7s cubic-bezier(.4,0,.2,1) infinite; animation-play-state: paused; }
+    .feat-anim[data-step="0"].is-active .se-line.is-bug-line { animation-play-state: running; }
+    @keyframes bugLineFlash {
+      0%,36%   { background: transparent; }
+      40%,72%  { background: rgba(255,92,108,.1); }
+      83%,100% { background: transparent; }
+    }
+    .se-ln { color: var(--faint); width: 28px; flex-shrink:0; user-select:none; }
+    .ck { color: #bbb8ff; }
+    .cf { color: #7af4df; }
+    .cv { color: var(--ink); }
+    .cn { color: #ffb340; }
+    .co { color: var(--code-muted); }
+    .cbug { color: var(--danger); font-weight: 900; }
+    .se-popup {
+      position: absolute;
+      right: 12px;
+      top: calc(12px + 108px - 4px);
+      width: 270px;
+      padding: 14px;
+      border-radius: 11px;
+      background: rgba(26,29,39,.98);
+      border: 1px solid rgba(255,92,108,.44);
+      box-shadow: 0 20px 50px rgba(0,0,0,.45), 0 0 0 1px rgba(255,92,108,.12);
+      z-index: 10;
+      animation: popupSlide 7s cubic-bezier(.4,0,.2,1) infinite;
+      animation-play-state: paused;
+    }
+    .feat-anim[data-step="0"].is-active .se-popup { animation-play-state: running; }
+    @keyframes popupSlide {
+      0%,42%  { opacity:0; transform:translateX(22px) scale(.96); }
+      52%     { opacity:1; transform:translateX(0) scale(1); }
+      70%     { opacity:1; transform:translateX(0) scale(1); }
+      80%     { opacity:0; transform:translateX(12px) scale(.98); }
+      100%    { opacity:0; }
+    }
+    .se-popup-title { display: flex; align-items: center; gap: 8px; color: var(--danger); font: 900 11px/1 var(--font-mono); margin-bottom: 9px; }
+    .se-popup-icon { display: grid; place-items: center; width: 20px; height: 20px; border-radius: 4px; background: rgba(255,92,108,.18); font-size: 11px; }
+    .se-popup p { margin: 0 0 10px; color: var(--code-muted); font-size: 12px; line-height: 1.55; }
+    .se-popup code { color: #bbb8ff; background: rgba(108,99,255,.18); padding: 1px 5px; border-radius: 3px; font-family: var(--font-mono); }
+    .se-popup-fix { padding: 7px 10px; border-radius: 7px; background: rgba(0,210,160,.08); border: 1px solid rgba(0,210,160,.24); color: var(--mint); font: 900 11px/1.4 var(--font-mono); }
+    .se-popup-fix code { color: var(--mint); background: rgba(0,210,160,.12); }
+
+    /* ── ANIM 1: HINTS ── */
+    .anim-hints { width: 100%; max-width: 460px; display: grid; gap: 0; }
+    .hints-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; animation: hintsHeaderShow 9s ease-in-out infinite; animation-play-state: paused; }
+    .feat-anim[data-step="1"].is-active .hints-header { animation-play-state: running; }
+    @keyframes hintsHeaderShow {
+      0%,4%   { opacity:0; transform:translateY(8px); }
+      10%,88% { opacity:1; transform:translateY(0); }
+      96%,100%{ opacity:0; transform:translateY(-4px); }
+    }
+    .hh-wa { padding: 6px 12px; border-radius: 6px; background: rgba(255,92,108,.14); color: var(--danger); font: 900 11px/1 var(--font-mono); }
+    .hh-label { color: var(--muted); font-size: 13px; }
+    .hints-stack { display: grid; gap: 12px; }
+    .hc { padding: 16px 18px; border-radius: 12px; border: 1px solid var(--code-border); background: rgba(22,25,38,.9); opacity: 0; transform: translateY(24px); }
+    .hc-1 { animation: hc1Show 9s ease-in-out infinite; animation-play-state: paused; }
+    .hc-2 { border-color: color-mix(in oklab, var(--accent) 35%, var(--code-border)); animation: hc2Show 9s ease-in-out infinite; animation-play-state: paused; }
+    .hc-3 { border-color: color-mix(in oklab, var(--mint) 42%, var(--code-border)); background: rgba(22,25,38,.95); animation: hc3Show 9s ease-in-out infinite; animation-play-state: paused; }
+    .feat-anim[data-step="1"].is-active .hc-1 { animation-play-state: running; }
+    .feat-anim[data-step="1"].is-active .hc-2 { animation-play-state: running; }
+    .feat-anim[data-step="1"].is-active .hc-3 { animation-play-state: running; }
+    @keyframes hc1Show {
+      0%,10%   { opacity:0; transform:translateY(24px); }
+      20%,86%  { opacity:1; transform:translateY(0); }
+      96%,100% { opacity:0; transform:translateY(-8px); }
+    }
+    @keyframes hc2Show {
+      0%,28%   { opacity:0; transform:translateY(24px); }
+      38%,86%  { opacity:1; transform:translateY(0); }
+      96%,100% { opacity:0; transform:translateY(-8px); }
+    }
+    @keyframes hc3Show {
+      0%,48%   { opacity:0; transform:translateY(24px); box-shadow:none; }
+      58%,86%  { opacity:1; transform:translateY(0); box-shadow:0 0 0 5px rgba(0,210,160,.07),0 20px 48px rgba(0,0,0,.3); }
+      96%,100% { opacity:0; transform:translateY(-8px); }
+    }
+    .hc-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+    .hc-num { color: var(--code-muted); font: 900 10px/1 var(--font-mono); text-transform: uppercase; letter-spacing: .1em; }
+    .hc-tag { display: inline-flex; align-items: center; padding: 3px 8px; border-radius: 999px; font: 900 10px/1 var(--font-mono); }
+    .hc-tag-test   { background: rgba(255,179,64,.12); color: var(--warning); }
+    .hc-tag-logic  { background: rgba(108,99,255,.16); color: #bbb8ff; }
+    .hc-tag-algo   { background: rgba(0,210,160,.12); color: var(--mint); }
+    .hc p { margin: 0; color: var(--code-muted); font-size: 13px; line-height: 1.6; }
+    .hc code { color: #bbb8ff; background: rgba(108,99,255,.16); padding: 1px 5px; border-radius: 3px; font-family: var(--font-mono); font-size: 11px; }
+    .hc-3 code { color: var(--mint); background: rgba(0,210,160,.1); }
+    .hc strong { color: var(--ink); }
+
+    /* ── ANIM 2: DIFF VIEWER ── */
+    .anim-diff { width: 100%; max-width: 520px; display: grid; gap: 14px; }
+    .diff-verdict { display: flex; align-items: center; gap: 12px; }
+    .dv-badge { display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px; border-radius: 8px; font: 900 13px/1 var(--font-mono); background: rgba(33,38,58,.8); border: 1px solid var(--code-border); color: var(--code-muted); animation: badgeFlip 10s ease-in-out infinite; animation-play-state: paused; }
+    .feat-anim[data-step="2"].is-active .dv-badge { animation-play-state: running; }
+    @keyframes badgeFlip {
+      0%,6%   { background:rgba(33,38,58,.8); color:var(--code-muted); border-color:var(--code-border); }
+      10%,92% { background:rgba(255,92,108,.12); color:var(--danger); border-color:rgba(255,92,108,.38); }
+      98%,100%{ background:rgba(33,38,58,.8); color:var(--code-muted); border-color:var(--code-border); }
+    }
+    .dv-badge-dot { width: 8px; height: 8px; border-radius: 50%; animation: badgeDot 10s ease-in-out infinite; animation-play-state: paused; }
+    .feat-anim[data-step="2"].is-active .dv-badge-dot { animation-play-state: running; }
+    @keyframes badgeDot {
+      0%,6%   { background: var(--code-muted); box-shadow:none; }
+      10%,92% { background: var(--danger); box-shadow:0 0 8px rgba(255,92,108,.6); }
+      98%,100%{ background: var(--code-muted); }
+    }
+    .dv-meta { color: var(--muted); font: 700 12px/1 var(--font-mono); animation: dvMetaShow 10s ease-in-out infinite; animation-play-state: paused; }
+    .feat-anim[data-step="2"].is-active .dv-meta { animation-play-state: running; }
+    @keyframes dvMetaShow {
+      0%,8%   { opacity:0; }
+      14%,92% { opacity:1; }
+      98%,100%{ opacity:0; }
+    }
+    .diff-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; animation: diffGridSlide 10s ease-in-out infinite; animation-play-state: paused; }
+    .feat-anim[data-step="2"].is-active .diff-grid { animation-play-state: running; }
+    @keyframes diffGridSlide {
+      0%,16%  { opacity:0; transform:translateY(18px); }
+      26%,90% { opacity:1; transform:translateY(0); }
+      97%,100%{ opacity:0; transform:translateY(-8px); }
+    }
+    .diff-col { border-radius: 10px; border: 1px solid var(--code-border); background: rgba(15,17,23,.9); overflow: hidden; }
+    .diff-col-head { padding: 8px 14px; font: 900 10px/1 var(--font-mono); text-transform: uppercase; letter-spacing: .1em; border-bottom: 1px solid var(--code-border); }
+    .diff-col-head.expected { color: var(--mint); background: rgba(0,210,160,.06); }
+    .diff-col-head.actual   { color: var(--code-muted); background: rgba(33,38,58,.4); }
+    .diff-lines { padding: 10px 0; }
+    .diff-line { display: flex; align-items: center; gap: 10px; height: 32px; padding: 0 14px; font: 800 12px/1 var(--font-mono); color: var(--code-fg); opacity: 0; transition: background 400ms, color 400ms; }
+    .diff-line .dl-ln { color: var(--faint); font-size: 10px; width: 16px; }
+    .diff-line.dl-1 { animation: dlAppear 10s ease-in-out infinite; animation-play-state: paused; }
+    .diff-line.dl-2 { animation: dlAppear 10s ease-in-out infinite; animation-play-state: paused; animation-delay:.3s; }
+    .diff-line.dl-3 { animation: dlAppear 10s ease-in-out infinite; animation-play-state: paused; animation-delay:.6s; }
+    .feat-anim[data-step="2"].is-active .diff-line { animation-play-state: running; }
+    @keyframes dlAppear {
+      0%,28%  { opacity:0; transform:translateX(-6px); }
+      38%,90% { opacity:1; transform:translateX(0); }
+      97%,100%{ opacity:0; }
+    }
+    .diff-line.dl-wrong { animation: dlWrong 10s ease-in-out infinite; animation-play-state: paused; animation-delay: .6s; }
+    .feat-anim[data-step="2"].is-active .diff-line.dl-wrong { animation-play-state: running; }
+    @keyframes dlWrong {
+      0%,28%  { opacity:0; transform:translateX(-6px); background:transparent; color:var(--code-fg); }
+      38%,52% { opacity:1; transform:translateX(0); background:transparent; color:var(--code-fg); }
+      58%,90% { opacity:1; background:rgba(255,92,108,.12); color:var(--danger); }
+      97%,100%{ opacity:0; }
+    }
+    .diff-trace { padding: 14px; border-radius: 10px; border: 1px solid rgba(255,92,108,.3); background: rgba(15,17,23,.9); display: flex; align-items: flex-start; gap: 12px; animation: traceShow 10s ease-in-out infinite; animation-play-state: paused; }
+    .feat-anim[data-step="2"].is-active .diff-trace { animation-play-state: running; }
+    @keyframes traceShow {
+      0%,60%  { opacity:0; transform:translateY(10px); }
+      70%,90% { opacity:1; transform:translateY(0); }
+      97%,100%{ opacity:0; }
+    }
+    .dt-icon { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 6px; background: rgba(255,92,108,.14); color: var(--danger); font-size: 12px; flex-shrink: 0; margin-top: 1px; }
+    .dt-body { flex: 1; }
+    .dt-label { color: var(--danger); font: 900 10px/1 var(--font-mono); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 7px; }
+    .dt-code { font: 800 12px/1.5 var(--font-mono); color: var(--code-muted); }
+    .dt-code .ck { color: #bbb8ff; }
+    .dt-code .cv { color: var(--ink); }
+    .dt-code .cbug { color: var(--danger); }
+    .dt-code .arrow-label { display: inline-flex; align-items: center; gap: 4px; padding: 2px 7px; margin-left: 6px; border-radius: 4px; background: rgba(255,92,108,.12); color: var(--danger); font-size: 10px; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 960px) {
+      body { padding: 0; }
+      .hero-shell { border-radius: 0; width: 100%; }
+      .nav, .hero-grid, .trust-row { width: min(92%, 760px); }
+      .nav { grid-template-columns: 1fr auto; margin-top: 28px; }
+      .links { display: none; }
+      .hero-grid { grid-template-columns: 1fr; padding-bottom: 160px; }
+      .visual { min-height: 500px; transform: translateY(-10px); }
+      .judge-3d { --rig-scale: 1; }
+      .trust-row { grid-template-columns: repeat(3,1fr); }
+      .feat-scroll { height: 580vh; }
+      .feat-viewport { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+      .feat-left { border-right: none; border-bottom: 0; min-height: 44vh; padding: 28px clamp(28px,8vw,72px); justify-content: flex-end; background: transparent; }
+      .feat-left::after { display: none; }
+      .feat-right { min-height: 56vh; }
+      .feat-texts { min-height: 260px; }
+    }
+    @media (max-width: 600px) {
+      .feat-scroll { height: 650vh; }
+      .nav { width: calc(100% - 32px); gap: 12px; }
+      .nav-auth { gap: 6px; }
+      .nav-login { display: none; }
+      .hero-grid { width: calc(100% - 36px); }
+      .judge-3d { --rig-scale: .78; }
+      .landing-cta h2 { font-size: clamp(28px,8.5vw,45px); }
+      .feat-title { font-size: clamp(22px,7vw,32px); }
+      .feat-left { padding: 22px 20px; }
+      .feat-anim { padding: 20px; }
+      .anim-scanner, .anim-hints, .anim-diff { max-width: 100%; }
+      .trust-row { grid-template-columns: repeat(2,1fr); }
+      .actions { flex-direction: column; }
+      .btn { width: 100%; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; }
+    }
+  </style>
+</helmet>
+
+<!-- ══════════ HERO ══════════ -->
+<main class="hero-shell">
+  <section class="hero-stage" id="top">
+    <div class="side-orb" aria-hidden="true"></div>
+
+    <nav class="nav">
+      <a class="brand" href="#">
+        <span class="brand-mark">&gt;_</span>
+        <span>CP-Tutor</span>
+      </a>
+      <div class="links">
+        <a href="#features">Tính năng</a>
+        <a href="#features">AI Mentor</a>
+        <a href="#start">Bắt đầu</a>
+      </div>
+      <div class="nav-auth">
+        <a class="nav-login" href="#">Đăng nhập</a>
+        <a class="nav-cta" href="#">Đăng ký</a>
+      </div>
+    </nav>
+
+    <section class="hero-grid">
+      <div class="copy">
+        <div class="kicker">Online Judge + AI Mentor</div>
+        <h1>Luyện C++ CP với chấm bài và AI Mentor</h1>
+        <p class="lead">CP-Tutor giúp học sinh đọc đề, viết C++17, nộp bài và nhận phân tích từ AI ngay trong một workspace gọn như IDE.</p>
+        <div class="actions">
+          <a class="btn btn-primary" href="#start">Bắt đầu luyện C++</a>
+          <a class="btn btn-secondary" href="#features">Xem AI Mentor</a>
+        </div>
+      </div>
+
+      <div class="visual">
+        <div class="visual-halo" aria-hidden="true"></div>
+        <div class="judge-3d" aria-hidden="true">
+          <div class="platform"></div>
+          <div class="orbit"></div>
+          <div class="mentor-orb"></div>
+          <div class="doc-card">
+            <div class="doc-head"><span class="doc-icon">OJ</span><span>Problem</span></div>
+            <div class="doc-lines"><span></span><span></span><span></span></div>
+            <div class="signature">#include</div>
+          </div>
+          <div class="code-card">
+            <div class="code-title"><span>solution.cpp</span><span class="cpp-pill">C++17</span></div>
+            <div class="code-line"><span>01</span><b style="width:76%;background:#bbb8ff"></b></div>
+            <div class="code-line"><span>02</span><b style="width:55%;background:#6e748d"></b></div>
+            <div class="code-line"><span>03</span><b style="width:86%;background:#00d2a0"></b></div>
+            <div class="code-line"><span>04</span><b style="width:44%;background:#ffb340"></b></div>
+          </div>
+          <div class="ai-card">
+            <strong><span>AI Mentor</span><span>AC</span></strong>
+            <p>Phân tích độ phức tạp, chỉ ra lỗi biên và gợi ý hướng tối ưu.</p>
+            <div class="ai-progress"><span></span><span></span><span></span></div>
+          </div>
+          <div class="verdict-chip"><span>AC</span> 124ms · 8.2MB</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="trust-row">
+      <span><b></b>C++17 only</span>
+      <span><b></b>Realtime verdict</span>
+      <span><b></b>AI feedback</span>
+      <span><b></b>Walkthrough</span>
+      <span><b></b>Test cases</span>
+      <span><b></b>Admin tools</span>
+    </section>
+  </section>
+</main>
+
+<!-- ══════════ FEATURES SCROLL ══════════ -->
+<section class="feat-scroll" id="features">
+  <div class="feat-viewport">
+
+    <!-- LEFT: sticky text panel -->
+    <div class="feat-left">
+      <div class="feat-section-label">Scroll để khám phá</div>
+      <div class="feat-texts">
+
+        <article class="feat-text is-active" data-step="0">
+          <div class="feat-step-tag">
+            <span class="step-num">01</span>
+            AI Code Review
+          </div>
+          <h2 class="feat-title">AI rà soát từng dòng C++ của bạn</h2>
+          <p class="feat-body">Sau khi nộp bài, AI Mentor không chỉ đọc verdict mà quét qua toàn bộ code — phát hiện lỗi biên, điều kiện dừng sai, vòng lặp thừa và đánh dấu chính xác dòng có vấn đề.</p>
+          <ul class="feat-bullets">
+            <li>Highlight dòng nghi lỗi, không chỉ báo tên file</li>
+            <li>Giải thích tại sao dòng đó sai về mặt logic</li>
+            <li>Phân tích độ phức tạp và đề xuất sửa inline</li>
+          </ul>
+        </article>
+
+        <article class="feat-text" data-step="1">
+          <div class="feat-step-tag">
+            <span class="step-num">02</span>
+            Hint System
+          </div>
+          <h2 class="feat-title">Gợi ý có kiểm soát, không lộ đáp án</h2>
+          <p class="feat-body">AI không paste lời giải. Bạn nhận hint theo tầng — từ gợi ý thử input nhỏ, đến kiểm tra invariant, rồi mới đề xuất kỹ thuật khi thực sự bí.</p>
+          <ul class="feat-bullets">
+            <li>3 tầng hint từ đơn giản đến sâu</li>
+            <li>Không bao giờ đưa thẳng code hoàn chỉnh</li>
+            <li>Dẫn dắt tư duy thuật toán thay vì thay thế</li>
+          </ul>
+        </article>
+
+        <article class="feat-text" data-step="2">
+          <div class="feat-step-tag">
+            <span class="step-num">03</span>
+            Testcase Trace
+          </div>
+          <h2 class="feat-title">Truy vết chính xác testcase nào fail</h2>
+          <p class="feat-body">Sau mỗi WA, hệ thống hiển thị đúng testcase fail, input cụ thể, output bạn trả ra và output đúng — side by side — rồi trỏ về dòng code đã gây ra lỗi đó.</p>
+          <ul class="feat-bullets">
+            <li>Diff viewer expected vs actual, từng dòng</li>
+            <li>Trace ngược từ output sai về đoạn code nguồn</li>
+            <li>Không cần mò log hay chạy lại thủ công</li>
+          </ul>
+        </article>
+
+      </div>
+      <div class="feat-progress">
+        <button class="feat-dot is-active" data-step="0" aria-label="Feature 1"></button>
+        <button class="feat-dot" data-step="1" aria-label="Feature 2"></button>
+        <button class="feat-dot" data-step="2" aria-label="Feature 3"></button>
+      </div>
+    </div>
+
+    <!-- RIGHT: animation panel -->
+    <div class="feat-right">
+
+      <!-- ANIM 0: Code Scanner -->
+      <div class="feat-anim is-active" data-step="0">
+        <div class="anim-scanner">
+          <div class="scanner-label">
+            <span class="sl-dot"></span>
+            AI đang phân tích code
+          </div>
+          <div class="scanner-editor">
+            <div class="se-titlebar">
+              <div class="se-dots"><span></span><span></span><span></span></div>
+              <span class="se-filename">solution.cpp</span>
+              <span class="se-lang">C++17</span>
+            </div>
+            <div class="se-body">
+              <div class="se-scanbar"></div>
+              <div class="se-lines">
+                <div class="se-line">
+                  <span class="se-ln">01</span>
+                  <span><span class="ck">while</span><span class="co"> (l &lt; r) {</span></span>
+                </div>
+                <div class="se-line">
+                  <span class="se-ln">02</span>
+                  <span><span class="co">&nbsp;&nbsp;</span><span class="ck">int</span><span class="co"> </span><span class="cv">sum</span><span class="co"> = a[l] + a[r];</span></span>
+                </div>
+                <div class="se-line">
+                  <span class="se-ln">03</span>
+                  <span><span class="co">&nbsp;&nbsp;</span><span class="ck">if</span><span class="co"> (sum == target) {</span></span>
+                </div>
+                <div class="se-line is-bug-line">
+                  <span class="se-ln">04</span>
+                  <span><span class="co">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="cv">l</span><span class="co">++;&nbsp;</span><span class="cbug">// ← thiếu r--</span></span>
+                </div>
+                <div class="se-line">
+                  <span class="se-ln">05</span>
+                  <span><span class="co">&nbsp;&nbsp;} </span><span class="ck">else if</span><span class="co"> (sum &lt; target) l++;</span></span>
+                </div>
+                <div class="se-line">
+                  <span class="se-ln">06</span>
+                  <span><span class="co">&nbsp;&nbsp;</span><span class="ck">else</span><span class="co"> r--;</span></span>
+                </div>
+                <div class="se-line">
+                  <span class="se-ln">07</span>
+                  <span><span class="co">}</span></span>
+                </div>
+              </div>
+              <div class="se-popup">
+                <div class="se-popup-title">
+                  <span class="se-popup-icon">!</span>
+                  Logic Error · Line 04
+                </div>
+                <p>Khi <code>sum == target</code>, chỉ tăng <code>l</code> mà không giảm <code>r</code> — bỏ sót tất cả cặp khi có phần tử trùng.</p>
+                <div class="se-popup-fix">Sửa thành: <code>l++; r--;</code></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ANIM 1: Hint Cards -->
+      <div class="feat-anim" data-step="1">
+        <div class="anim-hints">
+          <div class="hints-header">
+            <span class="hh-wa">WA · Test 7</span>
+            <span class="hh-label">AI Mentor đề xuất hint…</span>
+          </div>
+          <div class="hints-stack">
+            <div class="hc hc-1">
+              <div class="hc-header">
+                <span class="hc-num">Hint 1</span>
+                <span class="hc-tag hc-tag-test">Thử nghiệm</span>
+              </div>
+              <p>Thử input nhỏ: <code>[2, 2, 3]</code>, target <code>4</code>. Trace từng bước vòng lặp để quan sát trạng thái l và r.</p>
+            </div>
+            <div class="hc hc-2">
+              <div class="hc-header">
+                <span class="hc-num">Hint 2</span>
+                <span class="hc-tag hc-tag-logic">Invariant</span>
+              </div>
+              <p>Khi tìm thấy cặp đúng, cần dịch <strong>cả hai</strong> con trỏ — không chỉ tăng <code>l</code> — để tránh đếm trùng.</p>
+            </div>
+            <div class="hc hc-3">
+              <div class="hc-header">
+                <span class="hc-num">Hint 3</span>
+                <span class="hc-tag hc-tag-algo">Kỹ thuật</span>
+              </div>
+              <p>Two pointers sau khi sort: <code>l++</code> khi tổng nhỏ hơn, <code>r--</code> khi lớn hơn, <code>l++ r--</code> khi bằng target.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ANIM 2: Diff Viewer -->
+      <div class="feat-anim" data-step="2">
+        <div class="anim-diff">
+          <div class="diff-verdict">
+            <div class="dv-badge">
+              <span class="dv-badge-dot"></span>
+              <span class="dv-badge-text">WA · Wrong Answer</span>
+            </div>
+            <span class="dv-meta">Test 7 / 12 failed</span>
+          </div>
+          <div class="diff-grid">
+            <div class="diff-col">
+              <div class="diff-col-head expected">Expected output</div>
+              <div class="diff-lines">
+                <div class="diff-line dl-1"><span class="dl-ln">1</span>3 8</div>
+                <div class="diff-line dl-2"><span class="dl-ln">2</span>1 6</div>
+                <div class="diff-line dl-3"><span class="dl-ln">3</span>0 4</div>
+              </div>
+            </div>
+            <div class="diff-col">
+              <div class="diff-col-head actual">Your output</div>
+              <div class="diff-lines">
+                <div class="diff-line dl-1"><span class="dl-ln">1</span>3 8</div>
+                <div class="diff-line dl-2"><span class="dl-ln">2</span>1 6</div>
+                <div class="diff-line dl-3 dl-wrong"><span class="dl-ln">3</span>2 4</div>
+              </div>
+            </div>
+          </div>
+          <div class="diff-trace">
+            <div class="dt-icon">↑</div>
+            <div class="dt-body">
+              <div class="dt-label">Trace về nguồn lỗi</div>
+              <div class="dt-code">
+                <span class="se-ln" style="color:#555b70;font-size:11px">04&nbsp;</span>
+                <span class="ck">if</span>
+                <span class="co"> (sum == target) </span>
+                <span class="cv">l</span>
+                <span class="co">++; </span>
+                <span class="arrow-label">← thiếu r--</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ CTA ══════════ -->
+<section class="landing-cta" id="start">
+  <h2>Sẵn sàng luyện C++ với feedback rõ như một buổi review code?</h2>
+  <p>Tạo tài khoản để bắt đầu làm bài, nộp C++17 và nhận phân tích từ AI Mentor ngay sau mỗi verdict.</p>
+  <div class="actions cta-actions">
+    <a class="btn btn-primary" href="#">Đăng ký ngay</a>
+    <a class="btn btn-secondary" href="#">Đăng nhập</a>
+  </div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  componentDidMount() {
+    document.documentElement.lang = 'vi';
+
+    // ── Features scroll step detection ───────────────────────
+    const featSection = document.querySelector('.feat-scroll');
+    const featTexts   = Array.from(document.querySelectorAll('.feat-text'));
+    const featAnims   = Array.from(document.querySelectorAll('.feat-anim'));
+    const featDots    = Array.from(document.querySelectorAll('.feat-dot'));
+
+    if (!featSection) return;
+
+    let currentStep = 0;
+
+    const setStep = (step) => {
+      if (step === currentStep) return;
+      currentStep = step;
+      featTexts.forEach((el, i) => el.classList.toggle('is-active', i === step));
+      featDots.forEach((el, i)  => el.classList.toggle('is-active', i === step));
+      featAnims.forEach(el => el.classList.remove('is-active'));
+      void featSection.offsetHeight;
+      featAnims.forEach((el, i) => { if (i === step) el.classList.add('is-active'); });
+    };
+
+    const onScroll = () => {
+      const rect     = featSection.getBoundingClientRect();
+      const total    = featSection.offsetHeight - window.innerHeight;
+      const scrolled = Math.max(0, -rect.top);
+      const progress = Math.min(1, scrolled / Math.max(1, total));
+      const step     = Math.min(featAnims.length - 1, Math.floor(progress * featAnims.length));
+      setStep(step);
+    };
+
+    featDots.forEach((dot, i) => {
+      dot.addEventListener('click', () => {
+        const total       = featSection.offsetHeight - window.innerHeight;
+        const stepFraction = i / featAnims.length;
+        const targetY     = featSection.offsetTop + total * stepFraction + 1;
+        window.scrollTo({ top: targetY, behavior: 'smooth' });
+      });
+    });
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+    onScroll();
+  }
+}
+</script>
+</body>
+</html>
