@@ -1,0 +1,16 @@
+{
+  "name": "@cp-tutor/judge",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "bullmq": "^5.30.1",
+    "ioredis": "^5.4.2",
+    "@prisma/client": "^5.22.0",
+    "uuid": "^11.1.0",
+    "openai": "^4.85.4",
+    "@anthropic-ai/sdk": "^0.39.0"
+  },
+  "devDependencies": {
+    "prisma": "^5.22.0"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "name": "@cp-tutor/web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
+    "@monaco-editor/react": "^4.7.0",
+    "@prisma/client": "^5.22.0",
+    "bcryptjs": "^2.4.3",
+    "bullmq": "^5.30.1",
+    "date-fns": "^4.1.0",
+    "highlight.js": "^11.11.1",
+    "ioredis": "^5.4.2",
+    "jszip": "^3.10.1",
+    "next": "14.2.29",
+    "next-auth": "^4.24.11",
+    "openai": "^4.85.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-markdown": "^9.0.1",
+    "rehype-highlight": "^7.0.1"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/node": "^22.13.10",
+    "@types/react": "^18.3.18",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "^14.2.29",
+    "postcss": "^8.5.3",
+    "prisma": "^5.22.0",
+    "tailwindcss": "^3.4.17",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  }
+}

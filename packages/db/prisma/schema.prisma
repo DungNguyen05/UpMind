@@ -1,0 +1,162 @@
+generator client {
+  provider      = "prisma-client-js"
+  output        = "../../../node_modules/.prisma/client"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  student
+  admin
+}
+
+enum Difficulty {
+  easy
+  medium
+  hard
+}
+
+enum Verdict {
+  pending
+  AC
+  WA
+  TLE
+  MLE
+  RE
+  CE
+}
+
+enum FeedbackType {
+  wa_hint
+  tle_hint
+  ac_review
+  ce_explain
+}
+
+enum MessageRole {
+  user
+  assistant
+}
+
+model User {
+  id           String   @id @default(uuid())
+  username     String   @unique @db.VarChar(50)
+  email        String   @unique @db.VarChar(255)
+  passwordHash String   @map("password_hash")
+  role         Role     @default(student)
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  submissions     Submission[]
+  chatMessages    ChatMessage[]
+  createdProblems Problem[]    @relation("CreatedBy")
+
+  @@map("users")
+}
+
+model Problem {
+  id            String     @id @default(uuid())
+  title         String     @db.VarChar(200)
+  slug          String     @unique @db.VarChar(200)
+  description   String
+  difficulty    Difficulty
+  timeLimitMs   Int        @default(1000) @map("time_limit_ms")
+  memoryLimitMb Int        @default(256)  @map("memory_limit_mb")
+  isPublished   Boolean    @default(false) @map("is_published")
+  createdById   String     @map("created_by")
+  createdAt     DateTime   @default(now()) @map("created_at")
+
+  createdBy    User           @relation("CreatedBy", fields: [createdById], references: [id])
+  testCases    TestCase[]
+  submissions  Submission[]
+  topics       ProblemTopic[]
+  chatMessages ChatMessage[]
+
+  @@map("problems")
+}
+
+model Topic {
+  id       String         @id @default(uuid())
+  name     String         @unique @db.VarChar(100)
+  slug     String         @unique @db.VarChar(100)
+  problems ProblemTopic[]
+
+  @@map("topics")
+}
+
+model ProblemTopic {
+  problemId String  @map("problem_id")
+  topicId   String  @map("topic_id")
+  problem   Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  topic     Topic   @relation(fields: [topicId], references: [id])
+
+  @@id([problemId, topicId])
+  @@map("problem_topics")
+}
+
+model TestCase {
+  id             String  @id @default(uuid())
+  problemId      String  @map("problem_id")
+  input          String
+  expectedOutput String  @map("expected_output")
+  isSample       Boolean @default(false) @map("is_sample")
+  orderIndex     Int     @default(0)     @map("order_index")
+
+  problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  @@map("test_cases")
+}
+
+model Submission {
+  id               String   @id @default(uuid())
+  userId           String   @map("user_id")
+  problemId        String   @map("problem_id")
+  code             String
+  language         String   @default("cpp17") @db.VarChar(20)
+  verdict          Verdict  @default(pending)
+  runtimeMs        Int?     @map("runtime_ms")
+  memoryKb         Int?     @map("memory_kb")
+  compileError     String?  @map("compile_error")
+  failedTestInput  String?  @map("failed_test_input")
+  failedTestOutput String?  @map("failed_test_output")
+  submittedAt      DateTime @default(now()) @map("submitted_at")
+
+  user         User         @relation(fields: [userId],    references: [id])
+  problem      Problem      @relation(fields: [problemId], references: [id])
+  aiFeedback   AiFeedback?
+  chatMessages ChatMessage[]
+
+  @@map("submissions")
+}
+
+model AiFeedback {
+  id           String       @id @default(uuid())
+  submissionId String       @unique @map("submission_id")
+  feedbackType FeedbackType @map("feedback_type")
+  content      String
+  llmProvider  String       @map("llm_provider") @db.VarChar(50)
+  createdAt    DateTime     @default(now()) @map("created_at")
+
+  submission Submission @relation(fields: [submissionId], references: [id])
+
+  @@map("ai_feedbacks")
+}
+
+model ChatMessage {
+  id           String      @id @default(uuid())
+  userId       String      @map("user_id")
+  problemId    String      @map("problem_id")
+  submissionId String?     @map("submission_id")
+  role         MessageRole
+  content      String
+  createdAt    DateTime    @default(now()) @map("created_at")
+
+  user       User        @relation(fields: [userId],       references: [id])
+  problem    Problem     @relation(fields: [problemId],    references: [id])
+  submission Submission? @relation(fields: [submissionId], references: [id])
+
+  @@map("chat_messages")
+}

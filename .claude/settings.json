@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(docker-compose build *)",
+      "Bash(docker-compose up *)",
+      "Bash(docker-compose exec *)",
+      "Bash(docker-compose ps *)",
+      "Bash(docker-compose logs *)",
+      "Bash(curl -s -c /tmp/cp_cookies.txt -b /tmp/cp_cookies.txt -X POST http://localhost:3000/api/auth/callback/credentials -H 'Content-Type: application/x-www-form-urlencoded' -d 'username=student01&password=student123&csrfToken=test&callbackUrl=http%3A%2F%2Flocalhost%3A3000' -v)",
+      "Bash(curl -s -c /tmp/cp_jar.txt \"http://localhost:3000/api/auth/csrf\")",
+      "Bash(curl -s -c /tmp/jar.txt \"http://localhost:3000/api/auth/csrf\")",
+      "Bash(curl -s \"http://localhost:3000/login\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" \"http://localhost:3000/_next/static/chunks/main-app-b93396070d9d72a4.js\")",
+      "Bash(curl -s -c /tmp/jar2.txt \"http://localhost:3000/api/auth/csrf\")",
+      "Bash(curl -s -b /tmp/jar2.txt \"http://localhost:3000/api/submissions/9fe95e14-374d-43da-863b-42d174fbc373\")",
+      "Bash(curl -s -c /tmp/jarnew.txt \"http://localhost:3000/api/auth/csrf\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" -b /tmp/jarnew.txt \"http://localhost:3000/problems\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" -b /tmp/jarnew.txt \"http://localhost:3000/problems/two-sum\")",
+      "Bash(curl -s -b /tmp/jarnew.txt \"http://localhost:3000/api/problems/two-sum\")"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\PC\\.claude\\projects\\c--Users-PC-Repo-UpMind\\memory"
+    ]
+  }
+}
