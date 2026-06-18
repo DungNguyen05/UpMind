@@ -120,10 +120,11 @@ export default function StatusBar({ problemId, onSubmissionUpdate }: Props) {
           setRuntimeMs(data.runtimeMs ?? null)
           setMemoryKb(data.memoryKb ?? null)
           if (data.verdict !== 'pending') {
-            setStatus(data.verdict === 'AC' ? 'Accepted' : 'Có test chưa đúng')
+            const aiFeedbackLoading = Boolean(data.aiFeedbackQueued)
+            setStatus(aiFeedbackLoading ? 'Mentor đang phân tích...' : data.verdict === 'AC' ? 'Accepted' : 'Có test chưa đúng')
             setSubmitting(false)
             completedRef.current = true
-            await refreshSubmission(submissionId, false)
+            await refreshSubmission(submissionId, aiFeedbackLoading)
           }
         }
         if (data.aiFeedbackReady) {
@@ -132,13 +133,23 @@ export default function StatusBar({ problemId, onSubmissionUpdate }: Props) {
           setStatus('Mentor đã phân tích')
           es.close()
         }
+        if (data.aiFeedbackFailed) {
+          toast('AI Mentor chưa phân tích được submission này.', 'error')
+          await refreshSubmission(submissionId, false)
+          setStatus('Mentor gặp lỗi')
+          es.close()
+        }
       } catch {}
     }
 
     es.onerror = () => {
       es.close()
       setSubmitting(false)
-      if (!completedRef.current) setStatus('Lỗi kết nối')
+      if (completedRef.current) {
+        refreshSubmission(submissionId, false)
+      } else {
+        setStatus('Lỗi kết nối')
+      }
     }
   }
 

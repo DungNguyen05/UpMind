@@ -122,6 +122,10 @@ if (process.env.LLM_API_KEY) {
         )
       } catch (error) {
         console.error('AI feedback failed:', error.message)
+        await redisPublisher.publish(
+          `submission:${data.submissionId}`,
+          JSON.stringify({ aiFeedbackFailed: true })
+        )
       }
     },
     { connection: redis }

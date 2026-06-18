@@ -4,6 +4,7 @@ import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { streamLLMResponse } from '@/lib/llm'
 import { buildChatSystemPrompt } from '@/lib/prompts'
+import { collectSseTextStream } from '@/lib/sse'
 
 export const dynamic = 'force-dynamic'
 
@@ -82,17 +83,7 @@ export async function POST(req: Request) {
     const [streamForClient, streamForSave] = stream.tee()
     ;(async () => {
       try {
-        const reader = streamForSave.getReader()
-        const decoder = new TextDecoder()
-        let full = ''
-        while (true) {
-          const { done, value } = await reader.read()
-          if (done) break
-          const chunk = decoder.decode(value)
-          for (const line of chunk.split('\n')) {
-            if (line.startsWith('data: ')) full += line.slice(6)
-          }
-        }
+        const full = await collectSseTextStream(streamForSave)
         if (full) {
           await prisma.chatMessage.create({
             data: {

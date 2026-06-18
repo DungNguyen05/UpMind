@@ -16,6 +16,33 @@ int main() {
 }
 `
 
+function prefillKey(problemSlug: string) {
+  return `prefillCode:${problemSlug}`
+}
+
+function draftKey(problemSlug: string) {
+  return `draftCode:${problemSlug}`
+}
+
+function readStoredCode(problemSlug: string) {
+  if (typeof window === 'undefined') return CPP_TEMPLATE
+  const legacyCode = sessionStorage.getItem('cp-editor-code')
+  const legacySlug = sessionStorage.getItem('cp-editor-code-slug')
+  return (
+    localStorage.getItem(prefillKey(problemSlug)) ??
+    localStorage.getItem(draftKey(problemSlug)) ??
+    sessionStorage.getItem(draftKey(problemSlug)) ??
+    (legacySlug === problemSlug ? legacyCode : null) ??
+    CPP_TEMPLATE
+  )
+}
+
+function writeStorage(storage: Storage, key: string, value: string) {
+  try {
+    storage.setItem(key, value)
+  } catch {}
+}
+
 interface Props {
   problemId: string
   problemSlug: string
@@ -34,33 +61,30 @@ const Editor = forwardRef<EditorRef, Props>(function Editor(
   ref
 ) {
   const editorRef = useRef<any>(null)
-  const [code, setCode] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem(`prefillCode:${problemSlug}`) ?? CPP_TEMPLATE
-    }
-    return CPP_TEMPLATE
-  })
+  const [code, setCode] = useState(() => readStoredCode(problemSlug))
 
   useImperativeHandle(ref, () => ({
     getValue: () => editorRef.current?.getValue() ?? code,
   }))
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const prefill = localStorage.getItem(`prefillCode:${problemSlug}`)
-      if (prefill) {
-        setCode(prefill)
-        onCodeChange?.(prefill)
-        localStorage.removeItem(`prefillCode:${problemSlug}`)
-      } else {
-        onCodeChange?.(code)
-      }
-    }
-  }, [code, onCodeChange, problemSlug])
+    if (typeof window === 'undefined') return
+
+    const nextCode = readStoredCode(problemSlug)
+    setCode(nextCode)
+    editorRef.current?.setValue(nextCode)
+    syncCode(nextCode)
+    localStorage.removeItem(prefillKey(problemSlug))
+    // Run only when the route changes problem; regular edits are persisted in syncCode.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [problemSlug])
 
   function syncCode(nextCode: string) {
     ;(window as any).__cpEditorValue = nextCode
-    sessionStorage.setItem('cp-editor-code', nextCode)
+    writeStorage(localStorage, draftKey(problemSlug), nextCode)
+    writeStorage(sessionStorage, draftKey(problemSlug), nextCode)
+    writeStorage(sessionStorage, 'cp-editor-code', nextCode)
+    writeStorage(sessionStorage, 'cp-editor-code-slug', problemSlug)
     onCodeChange?.(nextCode)
   }
 

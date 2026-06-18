@@ -5,6 +5,7 @@ import ReactMarkdown from 'react-markdown'
 import { useToast } from '@/components/ui/Toast'
 import Badge from '@/components/ui/Badge'
 import { getMentorNextStep, getPatchSuggestion, getRootCause } from '@/lib/mentor'
+import { readSseTextStream } from '@/lib/sse'
 
 interface Message {
   role: 'user' | 'assistant'
@@ -126,20 +127,8 @@ export default function AiPanel({
         }),
       })
       if (!res.ok) throw new Error('Walkthrough failed')
-      const reader = res.body?.getReader()
-      const decoder = new TextDecoder()
-      if (!reader) return
-      let text = ''
-      while (true) {
-        const { done, value } = await reader.read()
-        if (done) break
-        const chunk = decoder.decode(value)
-        const lines = chunk.split('\n')
-        for (const lineText of lines) {
-          if (lineText.startsWith('data: ')) text += lineText.slice(6)
-        }
-        setWalkthroughContent(text)
-      }
+      if (!res.body) return
+      await readSseTextStream(res.body, setWalkthroughContent)
     } catch {
       setWalkthroughContent('Mentor chưa thể phân tích dòng này. Hãy thử lại sau hoặc hỏi trực tiếp trong tab Chat.')
     } finally {
@@ -180,24 +169,14 @@ export default function AiPanel({
         }),
       })
       if (!res.ok) throw new Error('Chat failed')
-      const reader = res.body?.getReader()
-      const decoder = new TextDecoder()
-      if (!reader) return
-      let text = ''
-      while (true) {
-        const { done, value } = await reader.read()
-        if (done) break
-        const chunk = decoder.decode(value)
-        const lines = chunk.split('\n')
-        for (const lineText of lines) {
-          if (lineText.startsWith('data: ')) text += lineText.slice(6)
-        }
+      if (!res.body) return
+      await readSseTextStream(res.body, (text) => {
         setMessages((prev) => {
           const next = [...prev]
           next[next.length - 1] = { role: 'assistant', content: text }
           return next
         })
-      }
+      })
     } catch {
       setMessages((prev) => {
         const next = [...prev]

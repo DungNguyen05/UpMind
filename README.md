@@ -174,8 +174,8 @@ npx prisma studio --schema=packages/db/prisma/schema.prisma
 
 | Role    | Email              | Mật khẩu |
 |---------|--------------------|-----------|
-| Admin   | admin@example.com  | admin123  |
-| Student | user@example.com   | user123   |
+| Admin   | admin@cptutor.dev      | admin123   |
+| Student | student01@cptutor.dev  | student123 |
 
 > Kiểm tra file `packages/db/prisma/seed.ts` để xem tài khoản chính xác.
 

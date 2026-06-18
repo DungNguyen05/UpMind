@@ -5,6 +5,7 @@ import ReactMarkdown from 'react-markdown'
 import Badge from '@/components/ui/Badge'
 import { useToast } from '@/components/ui/Toast'
 import { getMentorNextStep, getPatchSuggestion, getReviewFocus, getRootCause } from '@/lib/mentor'
+import { readSseTextStream } from '@/lib/sse'
 
 interface Message {
   role: 'user' | 'assistant'
@@ -76,23 +77,14 @@ export default function SubmissionMentorReview({ submission }: Props) {
         }),
       })
       if (!response.ok) throw new Error('Chat failed')
-      const reader = response.body?.getReader()
-      const decoder = new TextDecoder()
-      if (!reader) return
-      let text = ''
-      while (true) {
-        const { done, value } = await reader.read()
-        if (done) break
-        const chunk = decoder.decode(value)
-        for (const line of chunk.split('\n')) {
-          if (line.startsWith('data: ')) text += line.slice(6)
-        }
+      if (!response.body) return
+      await readSseTextStream(response.body, (text) => {
         setMessages((prev) => {
           const copy = [...prev]
           copy[copy.length - 1] = { role: 'assistant', content: text }
           return copy
         })
-      }
+      })
     } catch {
       setMessages((prev) => {
         const copy = [...prev]

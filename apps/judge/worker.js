@@ -24,6 +24,7 @@ const judgeWorker = new Worker(
     let finalRuntimeMs = 0, finalMemoryKb = null
     let failedTestInput = null, failedTestOutput = null, compileError = null
     const totalTests = problem.testCases.length
+    const aiFeedbackQueued = Boolean(process.env.LLM_API_KEY)
     let completedTests = 0, passedTests = 0, failedTests = 0
 
     const publishProgress = async (extra = {}) => {
@@ -100,10 +101,11 @@ const judgeWorker = new Worker(
         passedTests,
         failedTests: finalVerdict === 'CE' ? Math.max(1, totalTests) : failedTests,
         progress: finalVerdict === 'AC' ? 100 : totalTests > 0 ? Math.round(((finalVerdict === 'CE' ? totalTests : completedTests) / totalTests) * 100) : 100,
+        aiFeedbackQueued,
       })
     )
 
-    if (process.env.LLM_API_KEY) {
+    if (aiFeedbackQueued) {
       const aiQueue = new Queue('ai-queue', { connection: redis })
       await aiQueue.add('analyze', {
         submissionId,
