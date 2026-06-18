@@ -19,6 +19,8 @@ int main() {
 interface Props {
   problemId: string
   problemSlug: string
+  aiOpen?: boolean
+  onToggleAi?: () => void
   onWalkthroughLine?: (lineNumber: number, lineContent: string, fullCode: string) => void
   onCodeChange?: (code: string) => void
 }
@@ -28,7 +30,7 @@ export interface EditorRef {
 }
 
 const Editor = forwardRef<EditorRef, Props>(function Editor(
-  { problemSlug, onWalkthroughLine, onCodeChange },
+  { problemSlug, aiOpen, onToggleAi, onWalkthroughLine, onCodeChange },
   ref
 ) {
   const editorRef = useRef<any>(null)
@@ -103,7 +105,7 @@ const Editor = forwardRef<EditorRef, Props>(function Editor(
   }
 
   return (
-    <div className="solve-col" style={{ display: 'flex', flexDirection: 'column' }}>
+    <div className="solve-col editor-workspace" style={{ display: 'flex', flexDirection: 'column' }}>
       <div className="editor-head">
         <div className="row">
           <span className="mono" style={{ fontSize: 13 }}>solution.cpp</span>
@@ -112,6 +114,13 @@ const Editor = forwardRef<EditorRef, Props>(function Editor(
         <div className="row">
           <button className="ghost-btn icon-btn" title="Format code" onClick={handleFormat}>{'{ }'}</button>
           <button className="ghost-btn icon-btn" title="Reset code" onClick={handleReset}>↻</button>
+          <button
+            className={`secondary-btn mentor-toggle${aiOpen ? ' active' : ''}`}
+            type="button"
+            onClick={onToggleAi}
+          >
+            {aiOpen ? 'Ẩn Mentor' : 'AI Mentor'}
+          </button>
         </div>
       </div>
       <div style={{ flex: 1, minHeight: 0 }}>
@@ -127,6 +136,9 @@ const Editor = forwardRef<EditorRef, Props>(function Editor(
           onMount={handleMount}
           options={{
             minimap: { enabled: false },
+            overviewRulerLanes: 0,
+            overviewRulerBorder: false,
+            hideCursorInOverviewRuler: true,
             scrollBeyondLastLine: false,
             lineNumbers: 'on',
             glyphMargin: true,

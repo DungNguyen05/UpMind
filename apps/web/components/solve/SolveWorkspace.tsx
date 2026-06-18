@@ -42,7 +42,7 @@ interface Props {
 const MIN_PROBLEM_WIDTH = 280
 const MIN_CODE_WIDTH = 380
 const MIN_AI_WIDTH = 340
-const HANDLE_WIDTH = 10
+const HANDLE_WIDTH = 1
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max)
@@ -118,11 +118,22 @@ export default function SolveWorkspace({ problem, userSubmissions, initialLatest
         const hasAiWidth = typeof prev.ai === 'number'
         if (!hasProblemWidth && !hasAiWidth) return prev
 
-        const availableWidth = shell.getBoundingClientRect().width - HANDLE_WIDTH * 2
+        const handleCount = aiOpen ? 2 : 1
+        const availableWidth = shell.getBoundingClientRect().width - HANDLE_WIDTH * handleCount
         const measuredProblemWidth = leftPaneRef.current?.getBoundingClientRect().width ?? MIN_PROBLEM_WIDTH
         const measuredAiWidth = aiPaneRef.current?.getBoundingClientRect().width ?? MIN_AI_WIDTH
         let nextProblem = hasProblemWidth ? prev.problem! : measuredProblemWidth
         let nextAi = hasAiWidth ? prev.ai! : measuredAiWidth
+
+        if (!aiOpen) {
+          const maxProblemWidth = Math.max(MIN_PROBLEM_WIDTH, availableWidth - MIN_CODE_WIDTH)
+          const next = {
+            ...prev,
+            problem: hasProblemWidth ? Math.round(clamp(nextProblem, MIN_PROBLEM_WIDTH, maxProblemWidth)) : undefined,
+          }
+          if (next.problem === prev.problem) return prev
+          return next
+        }
 
         const maxSideWidth = Math.max(MIN_PROBLEM_WIDTH + MIN_AI_WIDTH, availableWidth - MIN_CODE_WIDTH)
         if (nextProblem + nextAi > maxSideWidth) {
@@ -159,7 +170,7 @@ export default function SolveWorkspace({ problem, userSubmissions, initialLatest
       observer.disconnect()
       window.removeEventListener('resize', constrain)
     }
-  }, [])
+  }, [aiOpen])
 
   const startResize = useCallback((target: 'problem' | 'ai') => (event: ReactPointerEvent<HTMLButtonElement>) => {
     if (window.matchMedia('(max-width: 1100px)').matches) return
@@ -173,8 +184,9 @@ export default function SolveWorkspace({ problem, userSubmissions, initialLatest
     const handleMove = (moveEvent: globalThis.PointerEvent) => {
       const shellRect = shell.getBoundingClientRect()
       const currentProblemWidth = leftPaneRef.current?.getBoundingClientRect().width ?? paneWidths.problem ?? MIN_PROBLEM_WIDTH
-      const currentAiWidth = aiPaneRef.current?.getBoundingClientRect().width ?? paneWidths.ai ?? MIN_AI_WIDTH
-      const availableWidth = shellRect.width - HANDLE_WIDTH * 2
+      const currentAiWidth = aiOpen ? aiPaneRef.current?.getBoundingClientRect().width ?? paneWidths.ai ?? MIN_AI_WIDTH : 0
+      const handleCount = aiOpen ? 2 : 1
+      const availableWidth = shellRect.width - HANDLE_WIDTH * handleCount
 
       setPaneWidths((prev) => {
         if (target === 'problem') {
@@ -203,7 +215,7 @@ export default function SolveWorkspace({ problem, userSubmissions, initialLatest
     window.addEventListener('pointermove', handleMove)
     window.addEventListener('pointerup', stopResize)
     window.addEventListener('pointercancel', stopResize)
-  }, [paneWidths.ai, paneWidths.problem])
+  }, [aiOpen, paneWidths.ai, paneWidths.problem])
 
   const resetPaneWidths = useCallback(() => {
     window.localStorage.removeItem('solvePaneWidths')
@@ -214,7 +226,7 @@ export default function SolveWorkspace({ problem, userSubmissions, initialLatest
     <>
       <div
         ref={shellRef}
-        className="solve-shell resizable-solve-shell"
+        className={`solve-shell resizable-solve-shell ${aiOpen ? 'ai-open' : 'ai-hidden'}`}
         style={{
           '--problem-pane': paneWidths.problem ? `${paneWidths.problem}px` : undefined,
           '--ai-pane': paneWidths.ai ? `${paneWidths.ai}px` : undefined,
@@ -234,31 +246,35 @@ export default function SolveWorkspace({ problem, userSubmissions, initialLatest
         <Editor
           problemId={problem.id}
           problemSlug={problem.slug}
+          aiOpen={aiOpen}
+          onToggleAi={() => setAiOpen((open) => !open)}
           onCodeChange={handleCodeChange}
           onWalkthroughLine={handleWalkthroughLine}
         />
-        <button
-          className="pane-resizer"
-          type="button"
-          aria-label="Kéo để đổi độ rộng editor và AI"
-          title="Kéo để đổi độ rộng. Double click để reset."
-          onPointerDown={startResize('ai')}
-          onDoubleClick={resetPaneWidths}
-        />
-        <div ref={aiPaneRef} className="solve-pane-wrap ai-pane-wrap">
-          <AiPanel
-            problemSlug={problem.slug}
-            problemTitle={problem.title}
-            latestSubmission={latestSubmission}
-            walkthroughLine={walkthroughLine}
-            currentCode={currentCode}
-            mobileOpen={aiOpen}
-          />
-        </div>
+        {aiOpen && (
+          <>
+            <button
+              className="pane-resizer"
+              type="button"
+              aria-label="Kéo để đổi độ rộng editor và AI"
+              title="Kéo để đổi độ rộng. Double click để reset."
+              onPointerDown={startResize('ai')}
+              onDoubleClick={resetPaneWidths}
+            />
+            <div ref={aiPaneRef} className="solve-pane-wrap ai-pane-wrap">
+              <AiPanel
+                problemSlug={problem.slug}
+                problemTitle={problem.title}
+                latestSubmission={latestSubmission}
+                walkthroughLine={walkthroughLine}
+                currentCode={currentCode}
+                mobileOpen={aiOpen}
+                onClose={() => setAiOpen(false)}
+              />
+            </div>
+          </>
+        )}
       </div>
-      <button className="primary-btn ai-drawer-toggle" type="button" onClick={() => setAiOpen((open) => !open)}>
-        AI
-      </button>
       <StatusBar problemId={problem.id} onSubmissionUpdate={handleSubmissionUpdate} />
     </>
   )

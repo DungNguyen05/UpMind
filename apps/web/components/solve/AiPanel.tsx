@@ -38,6 +38,7 @@ interface Props {
   walkthroughLine?: WalkthroughLine | null
   currentCode?: string
   mobileOpen?: boolean
+  onClose?: () => void
 }
 
 type Tab = 'plan' | 'debug' | 'chat' | 'walkthrough'
@@ -92,6 +93,7 @@ export default function AiPanel({
   walkthroughLine,
   currentCode,
   mobileOpen,
+  onClose,
 }: Props) {
   const toast = useToast()
   const [tab, setTab] = useState<Tab>('plan')
@@ -219,7 +221,12 @@ export default function AiPanel({
           <h2>Workspace Mentor</h2>
           <p className="muted">Theo dõi đề, code hiện tại và submission gần nhất để gợi ý đúng thời điểm.</p>
         </div>
-        <span className="badge pending">Context live</span>
+        <div className="row">
+          <span className="badge pending">Context live</span>
+          <button className="ghost-btn icon-btn mentor-close" type="button" title="Ẩn AI Mentor" onClick={onClose}>
+            ×
+          </button>
+        </div>
       </div>
 
       <div className="mentor-context">
