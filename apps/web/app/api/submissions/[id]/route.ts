@@ -21,9 +21,10 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
     if (submission.userId !== session.user.id && session.user.role !== 'admin') {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
+
     return NextResponse.json(submission)
-  } catch (err) {
-    console.error(err)
+  } catch (error) {
+    console.error(error)
     return NextResponse.json({ error: 'Lỗi máy chủ' }, { status: 500 })
   }
 }

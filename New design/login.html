@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Đăng nhập — CP-Tutor</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="auth-page">
+  <header class="auth-top">
+    <a class="brand" href="index.html"><span class="brand-mark">{}</span><span>CP-Tutor</span></a>
+  </header>
+  <main class="auth-center">
+    <form class="auth-card panel" id="loginForm" novalidate>
+      <div class="auth-title">
+        <span class="kicker">C++ Online Judge</span>
+        <h1>Đăng nhập</h1>
+        <p class="subtle">Chào mừng trở lại. Tiếp tục luyện bài và xem feedback từ AI Mentor.</p>
+      </div>
+      <div class="field">
+        <label for="loginUser">Email hoặc username</label>
+        <input id="loginUser" autocomplete="username" placeholder="nguyenchidung hoặc dung@example.com">
+      </div>
+      <div class="field">
+        <label for="loginPass">Mật khẩu</label>
+        <div class="input-row">
+          <input id="loginPass" type="password" autocomplete="current-password" placeholder="••••••••">
+          <button class="btn icon ghost" type="button" data-toggle-password="#loginPass">Hiện</button>
+        </div>
+      </div>
+      <p id="loginError" class="error-text hidden" style="margin-bottom:12px">Sai tên đăng nhập hoặc mật khẩu</p>
+      <button class="btn primary" type="submit" style="width:100%">Đăng nhập</button>
+      <p class="subtle" style="text-align:center;margin-top:16px">Chưa có tài khoản? <a class="ok-text" href="register.html">Đăng ký</a></p>
+    </form>
+  </main>
+  <div class="toast"></div>
+  <script src="app.js"></script>
+</body>
+</html>

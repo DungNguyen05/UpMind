@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import Navbar from '@/components/layout/Navbar'
 import Badge from '@/components/ui/Badge'
-import ReactMarkdown from 'react-markdown'
+import SubmissionMentorReview from '@/components/submissions/SubmissionMentorReview'
 import { formatDistanceToNow } from 'date-fns'
 import { vi } from 'date-fns/locale'
 
@@ -23,86 +24,91 @@ interface Submission {
   aiFeedback: { content: string; feedbackType: string } | null
 }
 
+function memoryText(memoryKb: number | null) {
+  return memoryKb != null ? `${Math.round(memoryKb / 1024)}MB` : '—'
+}
+
 export default function SubmissionDetailPage({ params }: { params: { id: string } }) {
   const router = useRouter()
-  const [sub, setSub] = useState<Submission | null>(null)
+  const [submission, setSubmission] = useState<Submission | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     fetch(`/api/submissions/${params.id}`)
-      .then((r) => { if (!r.ok) throw new Error(); return r.json() })
-      .then(setSub)
+      .then((response) => {
+        if (!response.ok) throw new Error('Not found')
+        return response.json()
+      })
+      .then(setSubmission)
       .catch(() => router.push('/submissions'))
       .finally(() => setLoading(false))
   }, [params.id, router])
 
   if (loading) return <div style={{ padding: 40, textAlign: 'center', color: 'var(--muted)' }}>Đang tải...</div>
-  if (!sub) return null
+  if (!submission) return null
 
   function useCode() {
-    localStorage.setItem(`prefillCode:${sub!.problem.slug}`, sub!.code)
-    router.push(`/problems/${sub!.problem.slug}`)
+    localStorage.setItem(`prefillCode:${submission!.problem.slug}`, submission!.code)
+    router.push(`/problems/${submission!.problem.slug}`)
   }
 
   return (
     <div className="app-shell">
       <Navbar />
-      <main className="main">
+      <main className="main wide-main">
         <div className="page-head">
           <div className="page-title">
-            <h1>{sub.problem.title}</h1>
+            <Link className="muted" href="/submissions" style={{ fontSize: 13 }}>← Quay lại lịch sử</Link>
+            <h1 style={{ marginTop: 6 }}>
+              {submission.problem.title} <Badge verdict={submission.verdict} />
+            </h1>
             <p className="muted" style={{ marginTop: 4 }}>
-              {formatDistanceToNow(new Date(sub.submittedAt), { locale: vi, addSuffix: true })}
+              {formatDistanceToNow(new Date(submission.submittedAt), { locale: vi, addSuffix: true })} · {submission.language}
             </p>
           </div>
-          <div className="row">
-            <Badge verdict={sub.verdict} />
-            <button className="secondary-btn" onClick={useCode}>Dùng code này</button>
-          </div>
+          <button className="primary-btn" onClick={useCode}>Dùng code này</button>
         </div>
 
         <div className="metric-grid">
-          <div className="metric"><span>Runtime</span><strong>{sub.runtimeMs != null ? `${sub.runtimeMs}ms` : '—'}</strong></div>
-          <div className="metric"><span>Memory</span><strong>{sub.memoryKb != null ? `${Math.round(sub.memoryKb / 1024)}MB` : '—'}</strong></div>
-          <div className="metric"><span>Ngôn ngữ</span><strong>{sub.language}</strong></div>
-          <div className="metric"><span>Verdict</span><Badge verdict={sub.verdict} /></div>
+          <div className="metric"><span>Runtime</span><strong>{submission.runtimeMs != null ? `${submission.runtimeMs}ms` : '—'}</strong></div>
+          <div className="metric"><span>Memory</span><strong>{memoryText(submission.memoryKb)}</strong></div>
+          <div className="metric"><span>Language</span><strong>{submission.language}</strong></div>
+          <div className="metric"><span>Verdict</span><Badge verdict={submission.verdict} /></div>
         </div>
 
-        <div className="split-2">
-          <div className="panel">
-            <div className="section-title">Code</div>
-            <pre className="submitted-code">{sub.code}</pre>
-            {sub.compileError && (
-              <>
-                <div className="section-title" style={{ marginTop: 12, color: 'var(--danger)' }}>Compile Error</div>
-                <pre className="code-block" style={{ color: 'var(--danger)' }}>{sub.compileError}</pre>
-              </>
+        <div className="submission-review">
+          <SubmissionMentorReview submission={submission} />
+
+          <section className="panel">
+            <div className="panel-head">
+              <h2>Code đã nộp</h2>
+              <span className="badge ce">Read-only</span>
+            </div>
+            <pre className="submitted-code">{submission.code}</pre>
+
+            {submission.compileError && (
+              <section className="mentor-section">
+                <h3>Compile Error</h3>
+                <pre className="code-block" style={{ color: 'var(--danger)' }}>{submission.compileError}</pre>
+              </section>
             )}
-            {sub.failedTestInput && (
-              <>
-                <div className="section-title" style={{ marginTop: 12 }}>Test case bị sai</div>
+
+            {submission.failedTestInput && (
+              <section className="mentor-section">
+                <h3>Bằng chứng từ judge</h3>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
                   <div>
                     <div className="muted" style={{ fontSize: 12, marginBottom: 4 }}>Input</div>
-                    <pre className="code-block">{sub.failedTestInput}</pre>
+                    <pre className="code-block">{submission.failedTestInput}</pre>
                   </div>
                   <div>
                     <div className="muted" style={{ fontSize: 12, marginBottom: 4 }}>Output của bạn</div>
-                    <pre className="code-block">{sub.failedTestOutput ?? '(empty)'}</pre>
+                    <pre className="code-block">{submission.failedTestOutput ?? '(empty)'}</pre>
                   </div>
                 </div>
-              </>
+              </section>
             )}
-          </div>
-
-          <div className="panel">
-            <div className="section-title">AI Feedback</div>
-            {sub.aiFeedback ? (
-              <ReactMarkdown>{sub.aiFeedback.content}</ReactMarkdown>
-            ) : (
-              <p className="muted">Không có AI feedback cho lần nộp này.</p>
-            )}
-          </div>
+          </section>
         </div>
       </main>
     </div>

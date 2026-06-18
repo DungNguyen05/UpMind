@@ -19,8 +19,8 @@ int main() {
 interface Props {
   problemId: string
   problemSlug: string
-  onWalkthroughLine?: (lineNumber: number, lineContent: string) => void
-  onSubmit?: (code: string) => void
+  onWalkthroughLine?: (lineNumber: number, lineContent: string, fullCode: string) => void
+  onCodeChange?: (code: string) => void
 }
 
 export interface EditorRef {
@@ -28,7 +28,7 @@ export interface EditorRef {
 }
 
 const Editor = forwardRef<EditorRef, Props>(function Editor(
-  { problemId, problemSlug, onWalkthroughLine, onSubmit },
+  { problemSlug, onWalkthroughLine, onCodeChange },
   ref
 ) {
   const editorRef = useRef<any>(null)
@@ -48,17 +48,28 @@ const Editor = forwardRef<EditorRef, Props>(function Editor(
       const prefill = localStorage.getItem(`prefillCode:${problemSlug}`)
       if (prefill) {
         setCode(prefill)
+        onCodeChange?.(prefill)
         localStorage.removeItem(`prefillCode:${problemSlug}`)
+      } else {
+        onCodeChange?.(code)
       }
     }
-  }, [problemSlug])
+  }, [code, onCodeChange, problemSlug])
+
+  function syncCode(nextCode: string) {
+    ;(window as any).__cpEditorValue = nextCode
+    sessionStorage.setItem('cp-editor-code', nextCode)
+    onCodeChange?.(nextCode)
+  }
 
   const handleMount: OnMount = (editor, monaco) => {
     editorRef.current = editor
-    ;(window as any).__cpEditorValue = editor.getValue()
+    syncCode(editor.getValue())
+
     editor.onDidChangeModelContent(() => {
-      ;(window as any).__cpEditorValue = editor.getValue()
+      syncCode(editor.getValue())
     })
+
     monaco.editor.defineTheme('cp-dark', {
       base: 'vs-dark',
       inherit: true,
@@ -73,7 +84,7 @@ const Editor = forwardRef<EditorRef, Props>(function Editor(
         const lineNumber = e.target.position?.lineNumber
         if (lineNumber && onWalkthroughLine) {
           const lineContent = editor.getModel()?.getLineContent(lineNumber) ?? ''
-          onWalkthroughLine(lineNumber, lineContent)
+          onWalkthroughLine(lineNumber, lineContent, editor.getValue())
         }
       }
     })
@@ -83,6 +94,7 @@ const Editor = forwardRef<EditorRef, Props>(function Editor(
     if (confirm('Reset code về template ban đầu?')) {
       setCode(CPP_TEMPLATE)
       editorRef.current?.setValue(CPP_TEMPLATE)
+      syncCode(CPP_TEMPLATE)
     }
   }
 
@@ -98,8 +110,8 @@ const Editor = forwardRef<EditorRef, Props>(function Editor(
           <span className="pill">C++17</span>
         </div>
         <div className="row">
-          <button className="ghost-btn icon-btn" title="Format" onClick={handleFormat}>⌥</button>
-          <button className="ghost-btn icon-btn" title="Reset" onClick={handleReset}>↺</button>
+          <button className="ghost-btn icon-btn" title="Format code" onClick={handleFormat}>{'{ }'}</button>
+          <button className="ghost-btn icon-btn" title="Reset code" onClick={handleReset}>↻</button>
         </div>
       </div>
       <div style={{ flex: 1, minHeight: 0 }}>
@@ -107,7 +119,11 @@ const Editor = forwardRef<EditorRef, Props>(function Editor(
           height="100%"
           language="cpp"
           value={code}
-          onChange={(v) => setCode(v ?? '')}
+          onChange={(value) => {
+            const nextCode = value ?? ''
+            setCode(nextCode)
+            syncCode(nextCode)
+          }}
           onMount={handleMount}
           options={{
             minimap: { enabled: false },

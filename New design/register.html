@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Đăng ký — CP-Tutor</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="auth-page">
+  <header class="auth-top">
+    <a class="brand" href="index.html"><span class="brand-mark">{}</span><span>CP-Tutor</span></a>
+  </header>
+  <main class="auth-center">
+    <form class="auth-card panel" id="registerForm" novalidate>
+      <div class="auth-title">
+        <span class="kicker">Tài khoản học viên</span>
+        <h1>Tạo tài khoản</h1>
+        <p class="subtle">Ít trường nhất có thể để bắt đầu luyện C++ ngay.</p>
+      </div>
+      <div class="field">
+        <label for="regUsername">Tên đăng nhập</label>
+        <input id="regUsername" placeholder="chi_dung_oj">
+        <div id="usernameHelp" class="help">Chỉ chữ cái, số, gạch dưới</div>
+      </div>
+      <div class="field">
+        <label for="regEmail">Email</label>
+        <input id="regEmail" type="email" placeholder="dung@example.com">
+      </div>
+      <div class="field">
+        <label for="regPass">Mật khẩu</label>
+        <input id="regPass" type="password" placeholder="Tối thiểu 8 ký tự">
+        <div style="height:6px;background:#11141d;border:1px solid var(--border);border-radius:99px;overflow:hidden"><span id="strengthBar" style="display:block;height:100%;width:0"></span></div>
+      </div>
+      <div class="field">
+        <label for="regConfirm">Xác nhận mật khẩu</label>
+        <input id="regConfirm" type="password">
+        <div id="confirmHelp" class="help error-text"></div>
+      </div>
+      <button class="btn primary" type="submit" style="width:100%">Tạo tài khoản</button>
+      <p class="subtle" style="text-align:center;margin-top:16px">Đã có tài khoản? <a class="ok-text" href="login.html">Đăng nhập</a></p>
+    </form>
+  </main>
+  <div class="toast"></div>
+  <script src="app.js"></script>
+</body>
+</html>

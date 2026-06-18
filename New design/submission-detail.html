@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Submission #1842 — CP-Tutor</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <nav class="app-nav">
+    <a class="brand" href="index.html"><span class="brand-mark">&gt;_</span><span>CP-Tutor</span></a>
+    <div class="nav-links"><a href="problems.html">Bài tập</a><a class="active" href="submissions.html">Nộp bài của tôi</a></div>
+    <div class="nav-right"><span class="avatar">ND</span></div>
+  </nav>
+  <main class="page page-wide">
+    <header class="page-head">
+      <div><a class="muted" href="submissions.html">← Quay lại</a><h1>Two Sum Sorted <span class="badge wa">WA</span></h1><p class="subtle mono">Submission #1842 · 16/06/2026 14:32 · C++17</p></div>
+      <a class="btn primary" href="problem-detail.html">Dùng code này</a>
+    </header>
+    <section class="grid grid-3" style="margin-bottom:16px">
+      <div class="card panel-body"><span class="kicker">Runtime</span><h2>1842ms</h2></div>
+      <div class="card panel-body"><span class="kicker">Memory</span><h2>12MB</h2></div>
+      <div class="card panel-body"><span class="kicker">Language</span><h2>C++17</h2></div>
+    </section>
+    <section class="submission-review">
+      <aside class="panel mentor-review">
+        <div class="panel-head"><h2>AI Mentor Review</h2><span class="badge wa">wa_hint</span></div>
+        <div class="panel-body">
+          <div class="review-hero">
+            <span class="badge wa">Sai ở control flow</span>
+            <h2>Ý tưởng đúng, chương trình không dừng sau khi tìm thấy đáp án.</h2>
+            <p class="subtle">Mentor đã đối chiếu output sai với trace con trỏ và khoanh vùng dòng 14-16.</p>
+          </div>
+          <div class="review-grid">
+            <div class="review-card">
+              <span class="kicker">Root cause</span>
+              <p>Sau khi <code>sum == target</code>, code in kết quả nhưng vòng lặp vẫn tiếp tục chạy.</p>
+            </div>
+            <div class="review-card">
+              <span class="kicker">Dòng cần sửa</span>
+              <p><code>14</code> cần dùng block và <code>return 0;</code> ngay sau khi in.</p>
+            </div>
+          </div>
+          <h3 class="section-title">Patch Mentor đề xuất</h3>
+          <pre>if (sum == target) {
+  cout &lt;&lt; left + 1 &lt;&lt; ' ' &lt;&lt; right + 1;
+  return 0;
+}</pre>
+          <h3 class="section-title">Test tái hiện lỗi</h3>
+          <div class="test-pack">
+            <pre id="reviewTest">5 12
+1 2 4 7 11</pre>
+            <button class="btn success" data-copy="#reviewTest" type="button">Copy test</button>
+          </div>
+          <div class="quick-prompts review-prompts">
+            <button type="button" data-prompt="Vì sao break khác return trong bài này?">Break vs return</button>
+            <button type="button" data-prompt="Giải thích trace con trỏ trên test lỗi.">Trace con trỏ</button>
+            <button type="button" data-prompt="Bài này có edge case nào dễ sai nữa?">Edge cases</button>
+          </div>
+          <div id="chatMessages" class="message-list" style="margin-top:12px">
+            <div class="message mentor-message"><b>Mentor:</b> Lần nộp này không cần đổi thuật toán. Hãy sửa nhánh tìm thấy đáp án rồi nộp lại.</div>
+          </div>
+          <div class="chat-input"><textarea id="chatText" placeholder="Hỏi thêm Mentor về submission này..."></textarea><button id="sendChat" class="btn primary" type="button">Gửi</button></div>
+        </div>
+      </aside>
+      <div class="panel">
+        <div class="panel-head"><h2>Code đã nộp</h2><span class="badge ce">Read-only</span></div>
+        <div class="panel-body"><pre>#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(NULL);
+
+  int n; long long target;
+  cin &gt;&gt; n &gt;&gt; target;
+  vector&lt;long long&gt; a(n);
+  for (auto &amp;x : a) cin &gt;&gt; x;
+
+  int left = 0, right = n - 1;
+  while (left &lt; right) {
+    long long sum = a[left] + a[right];
+    if (sum == target) cout &lt;&lt; left + 1 &lt;&lt; ' ' &lt;&lt; right + 1;
+    if (sum &lt; target) left++;
+    else right--;
+  }
+  return 0;
+}</pre></div>
+      </div>
+    </section>
+  </main>
+  <div class="toast"></div>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin — Tạo/Sửa bài</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <nav class="app-nav">
+    <a class="brand" href="index.html"><span class="brand-mark">&gt;_</span><span>CP-Tutor</span></a>
+    <div class="nav-links"><a href="problems.html">Bài tập</a><a href="admin-problems.html" class="active">Admin</a></div>
+    <div class="nav-right"><span id="saveState" class="error-text mono">Chưa lưu</span><button id="saveDraft" class="btn ghost">Lưu nháp</button><button id="publishProblem" class="btn primary">Publish</button></div>
+  </nav>
+  <main class="page page-wide">
+    <header class="page-head"><div><a class="muted" href="admin-problems.html">← Quay lại</a><h1>Bài mới</h1><p class="subtle">Form chia section rõ ràng, preview đề bài render realtime.</p></div></header>
+    <section class="admin-edit">
+      <form class="panel" data-tab-root>
+        <div class="panel-head"><h2>Thông tin bài</h2><span class="badge ce">Draft</span></div>
+        <div class="panel-body">
+          <h3>Thông tin cơ bản</h3>
+          <div class="field"><label for="problemName">Tên bài</label><input id="problemName" value="Two Sum Sorted"></div>
+          <div class="field"><label for="problemSlug">Slug</label><input id="problemSlug" value="two-sum-sorted"></div>
+          <div class="grid grid-2">
+            <div class="field"><label>Độ khó</label><select><option>Dễ</option><option>Vừa</option><option>Khó</option></select></div>
+            <div class="field"><label>Tags</label><input value="Array, Two Pointers"></div>
+          </div>
+          <h3 class="section-title">Đề bài</h3>
+          <div class="field"><label for="problemMarkdown">Nội dung đề bài (Markdown)</label><textarea id="problemMarkdown" style="min-height:190px"># Two Sum Sorted
+Cho mảng đã sắp xếp tăng dần và một số target.
+
+Tìm hai vị trí có tổng bằng `target`.</textarea></div>
+          <h3 class="section-title">Ràng buộc</h3>
+          <div class="grid grid-2">
+            <div class="field"><label>Time limit (ms)</label><input type="number" value="1000"></div>
+            <div class="field"><label>Memory limit (MB)</label><input type="number" value="256"></div>
+          </div>
+          <h3 class="section-title">Test cases</h3>
+          <div class="tabs" data-tabs><button class="tab-btn active" type="button" data-tab-target="manual">Nhập thủ công</button><button class="tab-btn" type="button" data-tab-target="upload">Upload file</button></div>
+          <div data-tab-root>
+            <div class="tab-panel active" data-tab-panel="manual" style="padding-top:12px">
+              <div id="caseList">
+                <div class="case-row"><textarea>5 9
+1 2 4 7 11</textarea><textarea>2 4</textarea><button class="btn icon danger" type="button" data-remove-case>×</button></div>
+                <div class="case-row"><textarea>4 6
+1 3 4 5</textarea><textarea>1 4</textarea><button class="btn icon danger" type="button" data-remove-case>×</button></div>
+              </div>
+              <button id="addCase" class="btn" type="button">+ Thêm test case</button>
+            </div>
+            <div class="tab-panel" data-tab-panel="upload" style="padding-top:12px">
+              <div class="card panel-body" style="border-style:dashed;text-align:center"><h3>Kéo ZIP test case vào đây</h3><p class="subtle mono">1.in, 1.out, 2.in, 2.out...</p><button class="btn ghost" type="button">Chọn file</button></div>
+            </div>
+          </div>
+        </div>
+      </form>
+      <aside class="panel sticky">
+        <div class="panel-head"><h2>Preview đề bài</h2><span class="badge easy">Student view</span></div>
+        <div id="previewMarkdown" class="panel-body md">
+          <h2>Two Sum Sorted</h2><br>Cho mảng đã sắp xếp tăng dần và một số target.<br><br>Tìm hai vị trí có tổng bằng <code>target</code>.
+        </div>
+      </aside>
+    </section>
+  </main>
+  <div class="toast"></div>
+  <script src="app.js"></script>
+</body>
+</html>

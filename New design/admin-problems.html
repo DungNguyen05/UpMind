@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin — Quản lý bài tập</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <nav class="app-nav">
+    <a class="brand" href="index.html"><span class="brand-mark">&gt;_</span><span>CP-Tutor</span></a>
+    <div class="nav-links"><a href="problems.html">Bài tập</a><a href="submissions.html">Nộp bài của tôi</a><a class="active" href="admin-problems.html">Admin</a></div>
+    <div class="nav-right"><span class="badge admin">Admin</span><span class="avatar">AD</span></div>
+  </nav>
+  <main class="page page-wide">
+    <header class="page-head">
+      <div><h1>Quản lý bài tập</h1><p class="subtle">Tạo bài, kiểm tra test case và publish/draft trực tiếp.</p></div>
+      <a class="btn primary" href="admin-problem-edit.html">+ Tạo bài mới</a>
+    </header>
+    <section class="panel">
+      <div class="panel-body">
+        <div class="toolbar"><div class="search"><input placeholder="Tìm bài theo tên hoặc tag..."></div><div class="segmented"><button class="active">Tất cả</button><button>Published</button><button>Draft</button></div></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Tên bài</th><th>Độ khó</th><th>Tags</th><th>Test cases</th><th>Submissions</th><th>Trạng thái</th><th>Hành động</th></tr></thead>
+            <tbody>
+              <tr><td><a class="row-title" href="admin-problem-edit.html">Two Sum Sorted</a></td><td><span class="badge easy">Dễ</span></td><td><span class="chip">Array</span> <span class="chip">Two Pointers</span></td><td class="mono">12 tests</td><td class="mono">318</td><td><button class="switch on" data-switch><span></span></button></td><td><a class="btn icon ghost" href="admin-problem-edit.html">✎</a> <button class="btn icon danger" data-delete="Two Sum Sorted">×</button></td></tr>
+              <tr><td><a class="row-title" href="admin-problem-edit.html">Dãy con tăng dài nhất</a></td><td><span class="badge medium">Vừa</span></td><td><span class="chip">DP</span></td><td class="mono">18 tests</td><td class="mono">176</td><td><button class="switch on" data-switch><span></span></button></td><td><a class="btn icon ghost" href="admin-problem-edit.html">✎</a> <button class="btn icon danger" data-delete="Dãy con tăng dài nhất">×</button></td></tr>
+              <tr><td><a class="row-title" href="admin-problem-edit.html">Đường đi có giới hạn trọng số</a></td><td><span class="badge hard">Khó</span></td><td><span class="chip">Graph</span> <span class="chip">Binary Search</span></td><td class="mono">24 tests</td><td class="mono">92</td><td><button class="switch" data-switch><span></span></button></td><td><a class="btn icon ghost" href="admin-problem-edit.html">✎</a> <button class="btn icon danger" data-delete="Đường đi có giới hạn trọng số">×</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+  <div id="deleteModal" class="modal-backdrop"><div class="modal panel"><h2>Xóa bài tập?</h2><p class="subtle">Bài <span id="deleteName" class="mono"></span> sẽ bị xóa trong prototype.</p><div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px"><button id="cancelDelete" class="btn ghost">Hủy</button><button id="confirmDelete" class="btn danger">Xóa</button></div></div></div>
+  <div class="toast"></div>
+  <script src="app.js"></script>
+</body>
+</html>

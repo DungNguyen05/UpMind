@@ -3,26 +3,53 @@
 import { useState, useEffect, useRef } from 'react'
 import Badge from '@/components/ui/Badge'
 import { useToast } from '@/components/ui/Toast'
+import type { MentorSubmission } from './AiPanel'
 
 interface Props {
   problemId: string
+  onSubmissionUpdate?: (submission: MentorSubmission) => void
 }
 
-export default function StatusBar({ problemId }: Props) {
+function toMentorSubmission(data: any): MentorSubmission {
+  return {
+    id: data.id,
+    verdict: data.verdict,
+    runtimeMs: data.runtimeMs ?? null,
+    memoryKb: data.memoryKb ?? null,
+    submittedAt: data.submittedAt ?? new Date().toISOString(),
+    language: data.language ?? 'cpp17',
+    compileError: data.compileError ?? null,
+    failedTestInput: data.failedTestInput ?? null,
+    failedTestOutput: data.failedTestOutput ?? null,
+    aiFeedback: data.aiFeedback
+      ? { content: data.aiFeedback.content, feedbackType: data.aiFeedback.feedbackType ?? null }
+      : null,
+  }
+}
+
+export default function StatusBar({ problemId, onSubmissionUpdate }: Props) {
   const toast = useToast()
   const [verdict, setVerdict] = useState<string | null>(null)
   const [runtimeMs, setRuntimeMs] = useState<number | null>(null)
   const [memoryKb, setMemoryKb] = useState<number | null>(null)
   const [status, setStatus] = useState('Sẵn sàng')
   const [submitting, setSubmitting] = useState(false)
-  const [aiFeedback, setAiFeedback] = useState<string | null>(null)
   const esRef = useRef<EventSource | null>(null)
+  const completedRef = useRef(false)
+
+  async function refreshSubmission(submissionId: string, aiFeedbackLoading = false) {
+    const response = await fetch(`/api/submissions/${submissionId}`)
+    if (!response.ok) return
+    const submission = toMentorSubmission(await response.json())
+    onSubmissionUpdate?.({ ...submission, aiFeedbackLoading })
+  }
 
   async function handleSubmit() {
     if (submitting) return
     setSubmitting(true)
     setVerdict('pending')
     setStatus('Đang gửi...')
+    completedRef.current = false
 
     const code = (window as any).__cpEditorValue ?? sessionStorage.getItem('cp-editor-code') ?? ''
     if (!code.trim()) {
@@ -33,13 +60,24 @@ export default function StatusBar({ problemId }: Props) {
     }
 
     try {
-      const res = await fetch('/api/submissions', {
+      const response = await fetch('/api/submissions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ problemId, code }),
       })
-      if (!res.ok) throw new Error('Submit failed')
-      const { submissionId } = await res.json()
+      if (!response.ok) throw new Error('Submit failed')
+      const { submissionId } = await response.json()
+      const optimisticSubmission: MentorSubmission = {
+        id: submissionId,
+        verdict: 'pending',
+        runtimeMs: null,
+        memoryKb: null,
+        submittedAt: new Date().toISOString(),
+        language: 'cpp17',
+        aiFeedback: null,
+        aiFeedbackLoading: false,
+      }
+      onSubmissionUpdate?.(optimisticSubmission)
       setStatus('Đang chấm...')
       openSSE(submissionId)
     } catch {
@@ -50,12 +88,13 @@ export default function StatusBar({ problemId }: Props) {
   }
 
   function openSSE(submissionId: string) {
-    if (esRef.current) { esRef.current.close() }
+    if (esRef.current) esRef.current.close()
     const es = new EventSource(`/api/submissions/${submissionId}/stream`)
     esRef.current = es
-    es.onmessage = (e) => {
+
+    es.onmessage = async (event) => {
       try {
-        const data = JSON.parse(e.data)
+        const data = JSON.parse(event.data)
         if (data.verdict) {
           setVerdict(data.verdict)
           setRuntimeMs(data.runtimeMs ?? null)
@@ -63,31 +102,34 @@ export default function StatusBar({ problemId }: Props) {
           if (data.verdict !== 'pending') {
             setStatus('Hoàn thành')
             setSubmitting(false)
-            es.close()
+            completedRef.current = true
+            await refreshSubmission(submissionId, false)
           }
         }
         if (data.aiFeedbackReady) {
           toast('AI Mentor có phản hồi mới!', 'success')
-          fetch(`/api/submissions/${submissionId}`).then((r) => r.json()).then((sub) => {
-            if (sub.aiFeedback?.content) setAiFeedback(sub.aiFeedback.content)
-          })
+          await refreshSubmission(submissionId, false)
+          es.close()
         }
       } catch {}
     }
-    es.onerror = () => { es.close(); setSubmitting(false); setStatus('Lỗi kết nối') }
+
+    es.onerror = () => {
+      es.close()
+      setSubmitting(false)
+      if (!completedRef.current) setStatus('Lỗi kết nối')
+    }
   }
 
-  // Sync editor code to sessionStorage periodically
   useEffect(() => {
     const interval = setInterval(() => {
-      const editors = document.querySelectorAll('.monaco-editor')
-      if (editors.length > 0) {
-        // Monaco stores value in model; read via window.__editorRef if set
-        const code = (window as any).__cpEditorValue
-        if (code) sessionStorage.setItem('cp-editor-code', code)
-      }
+      const code = (window as any).__cpEditorValue
+      if (code) sessionStorage.setItem('cp-editor-code', code)
     }, 500)
-    return () => clearInterval(interval)
+    return () => {
+      clearInterval(interval)
+      esRef.current?.close()
+    }
   }, [])
 
   return (

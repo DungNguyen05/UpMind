@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin — Người dùng</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <nav class="app-nav">
+    <a class="brand" href="index.html"><span class="brand-mark">&gt;_</span><span>CP-Tutor</span></a>
+    <div class="nav-links"><a href="problems.html">Bài tập</a><a href="admin-problems.html" class="active">Admin</a></div>
+    <div class="nav-right"><span class="badge admin">Admin</span><span class="avatar">AD</span></div>
+  </nav>
+  <main class="page page-wide">
+    <header class="page-head"><div><h1>Người dùng</h1><p class="subtle">Tìm kiếm học viên, xem activity và đổi role khi cần.</p></div></header>
+    <section class="panel">
+      <div class="panel-body">
+        <div class="toolbar"><div class="search"><input id="userSearch" placeholder="Search tên hoặc email..."></div></div>
+        <div class="table-wrap">
+          <table id="usersTable">
+            <thead><tr><th>Avatar</th><th>Username</th><th>Email</th><th>Role</th><th>Joined</th><th>Submissions</th><th>Hành động</th></tr></thead>
+            <tbody>
+              <tr><td><span class="avatar">ND</span></td><td class="row-title">nguyenchidung</td><td>dung@example.com</td><td><span class="badge admin">Admin</span></td><td class="mono">12/06/2026</td><td class="mono">38</td><td><a class="btn ghost" href="submissions.html">Xem submissions</a> <select data-role-select style="width:120px"><option>Admin</option><option>Student</option></select></td></tr>
+              <tr><td><span class="avatar">AL</span></td><td class="row-title">anhlaptrinh</td><td>anh@example.com</td><td><span class="badge ce">Student</span></td><td class="mono">10/06/2026</td><td class="mono">21</td><td><a class="btn ghost" href="submissions.html">Xem submissions</a> <select data-role-select style="width:120px"><option>Student</option><option>Admin</option></select></td></tr>
+              <tr><td><span class="avatar">MT</span></td><td class="row-title">minhtuan_cp</td><td>tuan@example.com</td><td><span class="badge ce">Student</span></td><td class="mono">03/06/2026</td><td class="mono">12</td><td><a class="btn ghost" href="submissions.html">Xem submissions</a> <select data-role-select style="width:120px"><option>Student</option><option>Admin</option></select></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+  <div class="toast"></div>
+  <script src="app.js"></script>
+</body>
+</html>

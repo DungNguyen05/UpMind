@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Two Sum Sorted — CP-Tutor</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="solve-body">
+  <nav class="app-nav solve-nav">
+    <a class="brand" href="index.html"><span class="brand-mark">&gt;_</span><span>CP-Tutor</span></a>
+    <div class="nav-links"><a class="active" href="problems.html">Bài tập</a><a href="submissions.html">Nộp bài của tôi</a></div>
+    <div class="nav-right"><span class="badge easy">C++17</span><span class="avatar">ND</span></div>
+  </nav>
+  <main class="solve-grid mentor-first">
+    <aside class="pane left-pane" data-tab-root>
+      <div class="tabs" data-tabs><button class="tab-btn active" data-tab-target="statement">Đề bài</button><button class="tab-btn" data-tab-target="problem-submissions">Submission</button></div>
+      <div class="pane-scroll tab-panel active" data-tab-panel="statement">
+        <div class="problem-title"><div><span class="kicker">001</span><h2>Two Sum Sorted</h2></div><span class="badge easy">Dễ</span></div>
+        <div class="row-sub"><span class="chip active">Array</span><span class="chip active">Two Pointers</span></div>
+        <div class="md">
+          <p>Cho một mảng số nguyên đã được sắp xếp tăng dần và một số nguyên <code>target</code>. Hãy tìm hai vị trí có tổng bằng <code>target</code>.</p>
+          <p>Trả về hai chỉ số theo thứ tự tăng dần. Dữ liệu đảm bảo tồn tại đúng một đáp án.</p>
+          <h3 class="section-title">Ràng buộc</h3>
+          <pre>2 ≤ n ≤ 2 * 10^5
+-10^9 ≤ a[i], target ≤ 10^9
+Mảng đã được sắp xếp tăng dần</pre>
+        </div>
+        <div class="example">
+          <h3>Ví dụ 1</h3>
+          <pre id="sample1">5 9
+1 2 4 7 11</pre><button class="btn copy-btn" data-copy="#sample1">Copy</button>
+          <p class="subtle">Output: <code>2 4</code> vì 2 + 7 = 9.</p>
+        </div>
+        <div class="example">
+          <h3>Ví dụ 2</h3>
+          <pre id="sample2">4 6
+1 3 4 5</pre><button class="btn copy-btn" data-copy="#sample2">Copy</button>
+          <p class="subtle">Output: <code>1 4</code>.</p>
+        </div>
+      </div>
+      <div class="pane-scroll tab-panel" data-tab-panel="problem-submissions">
+        <div class="grid">
+          <div class="card panel-body"><span class="badge ac">AC</span><p class="subtle mono">27 phút trước · 124ms · 8.2MB</p><a class="ok-text" href="submission-detail.html">Xem chi tiết</a></div>
+          <div class="card panel-body"><span class="badge wa">WA</span><p class="subtle mono">5 phút trước · 1842ms · 12MB</p><a class="ok-text" href="submission-detail.html">Xem chi tiết</a></div>
+        </div>
+      </div>
+    </aside>
+
+    <section class="pane code-pane">
+      <div class="editor-toolbar">
+        <strong class="mono">solution.cpp</strong><span class="badge ce">C++17</span>
+        <span class="spacer"></span>
+        <button id="resetCode" class="btn ghost" type="button">↻ Reset code</button>
+        <button id="formatCode" class="btn ghost" type="button">{ } Format</button>
+      </div>
+      <div class="editor" aria-label="C++ editor">
+        <div class="code-line"><span class="line-no">1</span><button class="gutter" data-line="1">?</button><span class="line-code"><span class="kw">#include</span> &lt;bits/stdc++.h&gt;</span></div>
+        <div class="code-line"><span class="line-no">2</span><button class="gutter" data-line="2">?</button><span class="line-code"><span class="kw">using namespace</span> std;</span></div>
+        <div class="code-line"><span class="line-no">3</span><button class="gutter" data-line="3">?</button><span class="line-code"></span></div>
+        <div class="code-line"><span class="line-no">4</span><button class="gutter" data-line="4">?</button><span class="line-code"><span class="kw">int</span> main() {</span></div>
+        <div class="code-line"><span class="line-no">5</span><button class="gutter" data-line="5">?</button><span class="line-code">  ios_base::sync_with_stdio(<span class="kw">false</span>);</span></div>
+        <div class="code-line"><span class="line-no">6</span><button class="gutter" data-line="6">?</button><span class="line-code">  cin.tie(NULL);</span></div>
+        <div class="code-line"><span class="line-no">7</span><button class="gutter" data-line="7">?</button><span class="line-code">  <span class="kw">int</span> n; <span class="kw">long long</span> target;</span></div>
+        <div class="code-line"><span class="line-no">8</span><button class="gutter" data-line="8">?</button><span class="line-code">  cin &gt;&gt; n &gt;&gt; target;</span></div>
+        <div class="code-line"><span class="line-no">9</span><button class="gutter" data-line="9">?</button><span class="line-code">  vector&lt;<span class="kw">long long</span>&gt; a(n);</span></div>
+        <div class="code-line"><span class="line-no">10</span><button class="gutter" data-line="10">?</button><span class="line-code">  <span class="kw">for</span> (<span class="kw">auto</span> &amp;x : a) cin &gt;&gt; x;</span></div>
+        <div class="code-line"><span class="line-no">11</span><button class="gutter" data-line="11">?</button><span class="line-code">  <span class="kw">int</span> left = 0, right = n - 1;</span></div>
+        <div class="code-line"><span class="line-no">12</span><button class="gutter" data-line="12">?</button><span class="line-code">  <span class="kw">while</span> (left &lt; right) {</span></div>
+        <div class="code-line"><span class="line-no">13</span><button class="gutter" data-line="13">?</button><span class="line-code">    <span class="kw">long long</span> sum = a[left] + a[right];</span></div>
+        <div class="code-line"><span class="line-no">14</span><button class="gutter" data-line="14">?</button><span class="line-code">    <span class="kw">if</span> (sum == target) cout &lt;&lt; left + 1 &lt;&lt; <span class="kw">' '</span> &lt;&lt; right + 1;</span></div>
+        <div class="code-line"><span class="line-no">15</span><button class="gutter" data-line="15">?</button><span class="line-code">    <span class="kw">if</span> (sum &lt; target) left++;</span></div>
+        <div class="code-line"><span class="line-no">16</span><button class="gutter" data-line="16">?</button><span class="line-code">    <span class="kw">else</span> right--;</span></div>
+        <div class="code-line"><span class="line-no">17</span><button class="gutter" data-line="17">?</button><span class="line-code">  }</span></div>
+        <div class="code-line"><span class="line-no">18</span><button class="gutter" data-line="18">?</button><span class="line-code">  <span class="kw">return</span> 0;</span></div>
+        <div class="code-line"><span class="line-no">19</span><button class="gutter" data-line="19">?</button><span class="line-code">}</span></div>
+      </div>
+    </section>
+
+    <aside class="pane ai-pane mentor-pane" id="aiPane" data-tab-root>
+      <div class="mentor-head">
+        <div>
+          <span class="kicker">AI Mentor active</span>
+          <h2>Phiên hướng dẫn Two Sum</h2>
+          <p class="subtle">Mentor theo dõi đề, code, test mẫu và submission gần nhất để gợi ý đúng thời điểm.</p>
+        </div>
+        <span class="badge pending">Context live</span>
+      </div>
+      <div class="mentor-context">
+        <div><span class="muted">Mục tiêu</span><strong>Tìm cặp chỉ số</strong></div>
+        <div><span class="muted">Chiến lược</span><strong>Two pointers</strong></div>
+        <div><span class="muted">Rủi ro</span><strong>Không dừng sau khi in</strong></div>
+      </div>
+      <div class="tabs mentor-tabs" data-tabs>
+        <button class="tab-btn active" data-tab-target="mentor-plan">Kế hoạch</button>
+        <button class="tab-btn" data-tab-target="feedback">Debug</button>
+        <button class="tab-btn" data-tab-target="chat">Hỏi AI</button>
+        <button class="tab-btn" data-tab-target="walkthrough">Dòng code</button>
+      </div>
+      <div class="pane-scroll tab-panel active" data-tab-panel="mentor-plan">
+        <div class="mentor-section">
+          <h3>Lộ trình giải có kiểm soát</h3>
+          <div class="mentor-steps">
+            <label class="mentor-step done"><input type="checkbox" checked> <span>Nhận ra mảng đã sắp xếp nên không cần hash map.</span></label>
+            <label class="mentor-step done"><input type="checkbox" checked> <span>Đặt hai con trỏ ở hai đầu mảng.</span></label>
+            <label class="mentor-step active"><input type="checkbox"> <span>Chứng minh mỗi bước chỉ loại bỏ một phía an toàn.</span></label>
+            <label class="mentor-step"><input type="checkbox"> <span>Chốt điều kiện dừng và hành vi sau khi tìm thấy đáp án.</span></label>
+          </div>
+        </div>
+        <div class="mentor-section">
+          <h3>Hint ladder</h3>
+          <button class="hint-card" type="button" data-hint="Nếu tổng hiện tại nhỏ hơn target, con trỏ trái cần tăng vì mảng đã sắp xếp.">
+            <span class="badge easy">Hint 1</span>
+            <strong>Con trỏ nào nên di chuyển khi tổng quá nhỏ?</strong>
+          </button>
+          <button class="hint-card" type="button" data-hint="Sau khi in đáp án, chương trình nên dừng ngay để không tiếp tục cập nhật con trỏ và sinh output dư.">
+            <span class="badge medium">Hint 2</span>
+            <strong>Điều gì xảy ra sau khi đã in đáp án?</strong>
+          </button>
+          <p id="hintReveal" class="mentor-answer subtle">Chọn một hint để Mentor mở gợi ý từng bước.</p>
+        </div>
+        <div class="mentor-section">
+          <h3>Test Mentor đề xuất</h3>
+          <div class="test-pack">
+            <pre>5 12
+1 2 4 7 11</pre>
+            <button class="btn success" data-copy="#mentorTest1" type="button">Copy test</button>
+          </div>
+          <pre id="mentorTest1" class="hidden">5 12
+1 2 4 7 11</pre>
+          <p class="subtle">Test này ép đáp án nằm ở hai đầu để kiểm tra nhánh dừng.</p>
+        </div>
+      </div>
+      <div class="pane-scroll tab-panel" data-tab-panel="feedback">
+        <h3>Debug sau submission gần nhất</h3>
+        <div class="feedback-score">
+          <div><span class="badge wa">WA</span><strong>Test 4 sai output</strong></div>
+          <span class="mono muted">1842ms · 12MB</span>
+        </div>
+        <div id="feedbackBody" class="md mentor-feedback">
+          <p><b>Nguyên nhân chính:</b> khi <code>sum == target</code>, code in đáp án nhưng không dừng chương trình. Vòng lặp tiếp tục chạy và có thể in thêm hoặc đổi con trỏ trước khi thoát.</p>
+          <div class="line-callout"><span class="mono">14</span><p>Thêm block rõ ràng và <code>return 0;</code> ngay sau khi in.</p></div>
+          <pre>if (sum == target) {
+  cout &lt;&lt; left + 1 &lt;&lt; ' ' &lt;&lt; right + 1;
+  return 0;
+}</pre>
+          <button class="btn success" id="askMore" type="button">Hỏi AI giải thích lỗi này</button>
+        </div>
+      </div>
+      <div class="pane-scroll tab-panel" data-tab-panel="chat">
+        <div class="context-strip">
+          <span class="chip active">Đề: Two Sum</span>
+          <span class="chip active">Code hiện tại</span>
+          <span class="chip active">Submission #3</span>
+        </div>
+        <div class="quick-prompts">
+          <button type="button" data-prompt="Gợi ý hướng giải nhưng đừng đưa code hoàn chỉnh.">Gợi ý không lộ đáp án</button>
+          <button type="button" data-prompt="Tạo thêm 3 test biên cho bài này.">Sinh test biên</button>
+          <button type="button" data-prompt="Giải thích vì sao two pointers đúng cho mảng đã sort.">Chứng minh thuật toán</button>
+        </div>
+        <div id="chatMessages" class="message-list" style="margin-top:12px">
+          <div class="message mentor-message"><b>Mentor:</b> Em đang ở bước debug. Lỗi hiện tại không nằm ở ý tưởng hai con trỏ, mà ở control flow sau khi tìm thấy đáp án.</div>
+        </div>
+        <div class="chat-input"><textarea id="chatText" placeholder="Hỏi Mentor về ý tưởng, test biên, lỗi dòng code..."></textarea><button id="sendChat" class="btn primary" type="button">Gửi</button></div>
+      </div>
+      <div class="pane-scroll tab-panel" data-tab-panel="walkthrough">
+        <p class="subtle">Click vào icon ở gutter editor để Mentor giải thích dòng code, biến liên quan và rủi ro logic.</p>
+        <h3 id="walkLine" style="margin-top:14px">Chưa chọn dòng</h3>
+        <pre id="walkSnippet">// chọn một dòng trong editor</pre>
+        <div class="mentor-answer">
+          <p id="walkExplain" class="subtle">Mentor sẽ bám theo dòng đã chọn và liên kết nó với thuật toán, test case, hoặc feedback gần nhất.</p>
+        </div>
+      </div>
+    </aside>
+  </main>
+  <button id="toggleAi" class="btn primary ai-drawer-toggle" type="button">AI</button>
+  <footer class="status-bar">
+    <span id="latestVerdict" class="badge wa">WA</span><span class="mono muted">1842ms</span><span class="mono muted">12MB</span>
+    <span class="spacer"></span><span id="judgeStatus" class="mono muted">Sẵn sàng nộp</span><div id="judgeProgress" class="judge-progress"><span></span></div><button id="submitSolution" class="btn primary" type="button">Nộp bài</button>
+  </footer>
+  <div id="resetModal" class="modal-backdrop"><div class="modal panel"><h2>Reset code?</h2><p class="subtle">Code hiện tại sẽ quay về template C++17.</p><div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px"><button id="cancelReset" class="btn ghost">Hủy</button><button id="confirmReset" class="btn danger">Reset</button></div></div></div>
+  <div class="toast"></div>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lịch sử nộp bài — CP-Tutor</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <nav class="app-nav">
+    <a class="brand" href="index.html"><span class="brand-mark">&gt;_</span><span>CP-Tutor</span></a>
+    <div class="nav-links"><a href="problems.html">Bài tập</a><a class="active" href="submissions.html">Nộp bài của tôi</a><a href="admin-problems.html">Admin</a></div>
+    <div class="nav-right dropdown"><button class="avatar" type="button">ND</button><div class="dropdown-menu"><a href="#">Tài khoản</a><button>Đăng xuất</button></div></div>
+  </nav>
+  <main class="page page-wide">
+    <header class="page-head">
+      <div><h1>Lịch sử nộp bài</h1><p class="subtle">Mỗi submission là một checkpoint học tập: verdict, nguyên nhân, và bước tiếp theo do AI Mentor đề xuất.</p></div>
+    </header>
+    <section class="panel">
+      <div class="panel-body">
+        <div class="toolbar">
+          <select id="submissionProblemFilter" style="max-width:260px"><option value="all">Tất cả bài</option><option value="two-sum">Two Sum Sorted</option><option value="lis">Dãy con tăng dài nhất</option><option value="gcd">Ước chung lớn nhất</option></select>
+          <select id="submissionVerdictFilter" style="max-width:200px"><option value="all">Verdict: Tất cả</option><option value="AC">AC</option><option value="WA">WA</option><option value="TLE">TLE</option><option value="CE">CE</option></select>
+        </div>
+        <div class="table-wrap">
+          <table id="submissionsTable">
+            <thead><tr><th>Thời gian</th><th>Bài</th><th>Verdict</th><th>Runtime</th><th>Memory</th><th>Mentor next step</th><th></th></tr></thead>
+            <tbody>
+              <tr data-problem="two-sum" data-verdict="WA"><td title="16/06/2026 14:32" class="mono">5 phút trước</td><td>Two Sum Sorted</td><td><span class="badge wa">WA</span></td><td class="mono">1842ms</td><td class="mono">12MB</td><td><span class="mentor-next">Sửa nhánh dừng sau khi in đáp án</span></td><td><a class="btn ghost" href="submission-detail.html">Review với AI</a></td></tr>
+              <tr data-problem="two-sum" data-verdict="AC"><td title="16/06/2026 14:10" class="mono">27 phút trước</td><td>Two Sum Sorted</td><td><span class="badge ac">AC</span></td><td class="mono">124ms</td><td class="mono">8.2MB</td><td><span class="mentor-next">Xem tối ưu I/O và edge cases</span></td><td><a class="btn ghost" href="submission-detail.html">Review với AI</a></td></tr>
+              <tr data-problem="lis" data-verdict="TLE"><td title="15/06/2026 21:04" class="mono">1 ngày trước</td><td>Dãy con tăng dài nhất</td><td><span class="badge tle">TLE</span></td><td class="mono">2000ms</td><td class="mono">9MB</td><td><span class="mentor-next">Đổi từ O(n²) sang binary search</span></td><td><a class="btn ghost" href="submission-detail.html">Review với AI</a></td></tr>
+              <tr data-problem="gcd" data-verdict="AC"><td title="12/06/2026 09:18" class="mono">4 ngày trước</td><td>Ước chung lớn nhất</td><td><span class="badge ac">AC</span></td><td class="mono">32ms</td><td class="mono">6MB</td><td><span class="mentor-next">Đã ổn, lưu pattern Euclid</span></td><td><a class="btn ghost" href="submission-detail.html">Review với AI</a></td></tr>
+              <tr data-problem="lis" data-verdict="CE"><td title="11/06/2026 20:22" class="mono">5 ngày trước</td><td>Dãy con tăng dài nhất</td><td><span class="badge ce">CE</span></td><td class="mono">—</td><td class="mono">—</td><td><span class="mentor-next">Đọc lỗi compile và fix khai báo vector</span></td><td><a class="btn ghost" href="submission-detail.html">Review với AI</a></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div id="submissionEmpty" class="empty-state hidden"><h2>Bạn chưa có submission phù hợp</h2><p class="subtle">Đổi bộ lọc hoặc quay lại danh sách bài tập.</p></div>
+      </div>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CP-Tutor UI Prototype</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <nav class="app-nav">
+    <a class="brand" href="index.html"><span class="brand-mark">&gt;_</span><span>CP-Tutor</span></a>
+    <div class="nav-links">
+      <a class="active" href="index.html">Tổng quan</a>
+      <a href="problems.html">Bài tập</a>
+      <a href="submissions.html">Nộp bài của tôi</a>
+      <a href="admin-problems.html">Admin</a>
+    </div>
+    <div class="nav-right"><span class="badge admin">Prototype v1.0</span></div>
+  </nav>
+
+  <main class="page page-wide">
+    <header class="page-head">
+      <div>
+        <div class="kicker">Online Judge + AI Mentor</div>
+        <h1>CP-Tutor — 10 màn hình sản phẩm</h1>
+        <p class="subtle">Mỗi trang là một file HTML riêng, có thể mở/view độc lập. Thiết kế desktop-first, hỗ trợ tablet, giao diện tiếng Việt và tối ưu cho học C++ competitive programming.</p>
+      </div>
+      <div class="stats">
+        <span class="stat-chip"><span>10</span> trang</span>
+        <span class="stat-chip"><span>C++17</span></span>
+        <span class="stat-chip"><span>AI panel</span></span>
+      </div>
+    </header>
+
+    <section class="grid launcher-grid">
+      <a class="card panel-body" href="login.html"><span class="kicker">01 /login</span><h2>Đăng nhập</h2><p class="subtle">Form auth, show/hide password, loading và lỗi.</p></a>
+      <a class="card panel-body" href="register.html"><span class="kicker">02 /register</span><h2>Đăng ký</h2><p class="subtle">Validation username, strength password, confirm password.</p></a>
+      <a class="card panel-body" href="problems.html"><span class="kicker">03 /problems</span><h2>Danh sách bài tập</h2><p class="subtle">Search, filter độ khó, multi-tag filter, empty state.</p></a>
+      <a class="card panel-body" href="problem-detail.html"><span class="kicker">04 /problems/[slug]</span><h2>Trang giải bài</h2><p class="subtle">3 cột: đề bài, editor C++ và AI Mentor với submit simulation.</p></a>
+      <a class="card panel-body" href="submissions.html"><span class="kicker">05 /submissions</span><h2>Lịch sử nộp bài</h2><p class="subtle">Bảng submissions có lọc theo bài và verdict.</p></a>
+      <a class="card panel-body" href="submission-detail.html"><span class="kicker">06 /submissions/[id]</span><h2>Chi tiết submission</h2><p class="subtle">Code read-only, runtime/memory và AI feedback.</p></a>
+      <a class="card panel-body" href="admin-problems.html"><span class="kicker">07 /admin/problems</span><h2>Admin — Bài tập</h2><p class="subtle">Quản lý publish/draft, edit/delete và stats.</p></a>
+      <a class="card panel-body" href="admin-problem-edit.html"><span class="kicker">08 /admin/problems/new</span><h2>Admin — Tạo/Sửa bài</h2><p class="subtle">Form dài, test cases, live Markdown preview.</p></a>
+      <a class="card panel-body" href="admin-users.html"><span class="kicker">09 /admin/users</span><h2>Admin — Người dùng</h2><p class="subtle">Search user, role badge, đổi role inline.</p></a>
+      <a class="card panel-body" href="error.html"><span class="kicker">10 404</span><h2>Trang lỗi</h2><p class="subtle">Terminal-style error state và CTA về trang chủ.</p></a>
+    </section>
+  </main>
+</body>
+</html>

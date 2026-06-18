@@ -43,7 +43,7 @@ export default function Navbar({ compact }: NavbarProps) {
         <button
           className="avatar ghost-btn"
           style={{ border: 'none', minHeight: 32, padding: 0 }}
-          onClick={() => setDropdownOpen((o) => !o)}
+          onClick={() => setDropdownOpen((open) => !open)}
         >
           {initials}
         </button>

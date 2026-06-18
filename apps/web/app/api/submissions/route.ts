@@ -20,8 +20,8 @@ export async function POST(req: Request) {
 
     await getJudgeQueue().add('judge', { submissionId: submission.id })
     return NextResponse.json({ submissionId: submission.id }, { status: 201 })
-  } catch (err) {
-    console.error(err)
+  } catch (error) {
+    console.error(error)
     return NextResponse.json({ error: 'Lỗi máy chủ' }, { status: 500 })
   }
 }
@@ -34,7 +34,7 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url)
     const problemId = searchParams.get('problemId')
     const verdict = searchParams.get('verdict')
-    const page = Math.max(1, parseInt(searchParams.get('page') ?? '1'))
+    const page = Math.max(1, parseInt(searchParams.get('page') ?? '1', 10))
     const limit = 20
 
     const where: any = { userId: session.user.id }
@@ -44,7 +44,10 @@ export async function GET(req: Request) {
     const [submissions, total] = await Promise.all([
       prisma.submission.findMany({
         where,
-        include: { problem: { select: { title: true, slug: true } } },
+        include: {
+          problem: { select: { id: true, title: true, slug: true } },
+          aiFeedback: { select: { content: true, feedbackType: true } },
+        },
         orderBy: { submittedAt: 'desc' },
         skip: (page - 1) * limit,
         take: limit,
@@ -53,8 +56,8 @@ export async function GET(req: Request) {
     ])
 
     return NextResponse.json({ submissions, total })
-  } catch (err) {
-    console.error(err)
+  } catch (error) {
+    console.error(error)
     return NextResponse.json({ error: 'Lỗi máy chủ' }, { status: 500 })
   }
 }

@@ -1,0 +1,26 @@
+{
+  "kind": "critique-panel",
+  "score": 4,
+  "axes": {
+    "philosophy": {
+      "score": 4,
+      "notes": "Dark technical product UI still matches CP-Tutor, but the product posture is now AI Mentor-first instead of judge-first with a helper panel."
+    },
+    "hierarchy": {
+      "score": 4,
+      "notes": "The solve screen now gives Mentor a large workspace with plan, hint, debug, chat, and line walkthrough modules; submission review opens with AI diagnosis before code evidence."
+    },
+    "execution": {
+      "score": 4,
+      "notes": "Shared tokens/components keep the 10 HTML pages consistent; responsive rules cover tablet by simplifying columns and using an AI drawer."
+    },
+    "specificity": {
+      "score": 4,
+      "notes": "Mentor content is tied to Two Sum Sorted, C++17, pointer movement, WA root cause, patch suggestion, and reproducible tests rather than generic chatbot copy."
+    },
+    "restraint": {
+      "score": 4,
+      "notes": "Accent use stays limited to actions, active states, and status badges; no marketing hero, generic gradients, or decorative filler."
+    }
+  }
+}

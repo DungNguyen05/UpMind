@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Danh sách bài tập — CP-Tutor</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <nav class="app-nav">
+    <a class="brand" href="index.html"><span class="brand-mark">&gt;_</span><span>CP-Tutor</span></a>
+    <div class="nav-links"><a class="active" href="problems.html">Bài tập</a><a href="submissions.html">Nộp bài của tôi</a><a href="admin-problems.html">Admin</a></div>
+    <div class="nav-right dropdown"><button class="avatar" type="button">ND</button><div class="dropdown-menu"><a href="#">Tài khoản</a><button>Đăng xuất</button></div></div>
+  </nav>
+  <main class="page page-wide">
+    <header class="page-head">
+      <div><h1>Danh sách bài tập</h1><p class="subtle">Chọn bài, lọc theo chủ đề và tiếp tục từ trạng thái gần nhất.</p></div>
+      <div class="stats"><span class="stat-chip">42 bài</span><span class="stat-chip">11 AC</span><span class="stat-chip"><span id="shownCount">8</span> đang hiển thị</span></div>
+    </header>
+    <section class="panel">
+      <div class="panel-body">
+        <div class="toolbar">
+          <div class="search"><input id="problemSearch" placeholder="Tìm kiếm bài, tag, thuật toán..."></div>
+          <div class="segmented" aria-label="Lọc độ khó">
+            <button class="active" data-difficulty-filter="all">Tất cả</button>
+            <button data-difficulty-filter="easy">Dễ</button>
+            <button data-difficulty-filter="medium">Vừa</button>
+            <button data-difficulty-filter="hard">Khó</button>
+          </div>
+        </div>
+        <div class="tagbar">
+          <button class="tag active" data-tag-filter="all">Tất cả</button>
+          <button class="tag" data-tag-filter="array">Array</button>
+          <button class="tag" data-tag-filter="dp">DP</button>
+          <button class="tag" data-tag-filter="graph">Graph</button>
+          <button class="tag" data-tag-filter="binary-search">Binary Search</button>
+          <button class="tag" data-tag-filter="two-pointers">Two Pointers</button>
+          <button class="tag" data-tag-filter="greedy">Greedy</button>
+          <button class="tag" data-tag-filter="math">Math</button>
+        </div>
+        <div class="table-wrap">
+          <table id="problemsTable">
+            <thead><tr><th>TT</th><th>#</th><th>Tên bài</th><th>Độ khó</th><th>% AC</th></tr></thead>
+            <tbody>
+              <tr data-href="problem-detail.html" data-difficulty="easy" data-tags="array,two-pointers"><td><span class="status-dot ac">✓</span></td><td class="mono">001</td><td><div class="row-title">Two Sum Sorted</div><div class="row-sub"><span class="chip">Array</span><span class="chip">Two Pointers</span></div></td><td><span class="badge easy">Dễ</span></td><td class="mono muted">72%</td></tr>
+              <tr data-href="problem-detail.html" data-difficulty="medium" data-tags="dp"><td><span class="status-dot try">!</span></td><td class="mono">014</td><td><div class="row-title">Dãy con tăng dài nhất</div><div class="row-sub"><span class="chip">DP</span></div></td><td><span class="badge medium">Vừa</span></td><td class="mono muted">45%</td></tr>
+              <tr data-href="problem-detail.html" data-difficulty="hard" data-tags="graph,binary-search"><td><span class="status-dot none">—</span></td><td class="mono">027</td><td><div class="row-title">Đường đi có giới hạn trọng số</div><div class="row-sub"><span class="chip">Graph</span><span class="chip">Binary Search</span></div></td><td><span class="badge hard">Khó</span></td><td class="mono muted">28%</td></tr>
+              <tr data-href="problem-detail.html" data-difficulty="easy" data-tags="sorting,greedy"><td><span class="status-dot ac">✓</span></td><td class="mono">031</td><td><div class="row-title">Sắp xếp lịch thi</div><div class="row-sub"><span class="chip">Sorting</span><span class="chip">Greedy</span></div></td><td><span class="badge easy">Dễ</span></td><td class="mono muted">81%</td></tr>
+              <tr data-href="problem-detail.html" data-difficulty="medium" data-tags="math,binary-search"><td><span class="status-dot none">—</span></td><td class="mono">044</td><td><div class="row-title">Căn bậc hai nguyên</div><div class="row-sub"><span class="chip">Math</span><span class="chip">Binary Search</span></div></td><td><span class="badge medium">Vừa</span></td><td class="mono muted">53%</td></tr>
+              <tr data-href="problem-detail.html" data-difficulty="medium" data-tags="array,prefix-sum"><td><span class="status-dot try">!</span></td><td class="mono">052</td><td><div class="row-title">Tổng đoạn lớn nhất</div><div class="row-sub"><span class="chip">Array</span><span class="chip">Prefix Sum</span></div></td><td><span class="badge medium">Vừa</span></td><td class="mono muted">49%</td></tr>
+              <tr data-href="problem-detail.html" data-difficulty="hard" data-tags="dp,graph"><td><span class="status-dot none">—</span></td><td class="mono">063</td><td><div class="row-title">Robot trên lưới có vật cản</div><div class="row-sub"><span class="chip">DP</span><span class="chip">Graph</span></div></td><td><span class="badge hard">Khó</span></td><td class="mono muted">22%</td></tr>
+              <tr data-href="problem-detail.html" data-difficulty="easy" data-tags="math"><td><span class="status-dot ac">✓</span></td><td class="mono">071</td><td><div class="row-title">Ước chung lớn nhất</div><div class="row-sub"><span class="chip">Math</span></div></td><td><span class="badge easy">Dễ</span></td><td class="mono muted">88%</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div id="problemEmpty" class="empty-state hidden"><h2>Không tìm thấy bài nào phù hợp</h2><p class="subtle">Thử bỏ bớt tag hoặc xóa từ khóa tìm kiếm.</p><button id="clearProblemFilters" class="btn" type="button">Xóa filter</button></div>
+        <div class="pagination"><button class="btn ghost">‹ Trước</button><button class="btn primary">1</button><button class="btn ghost">2</button><button class="btn ghost">Sau ›</button></div>
+      </div>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

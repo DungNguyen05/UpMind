@@ -26,52 +26,62 @@ async function callLLM(systemPrompt, userMessage) {
   const { provider, client } = createLLMClient()
   const model = process.env.LLM_MODEL || 'gpt-4o-mini'
   if (provider === 'anthropic') {
-    const res = await client.messages.create({
-      model, max_tokens: 1024,
+    const response = await client.messages.create({
+      model,
+      max_tokens: 1024,
       system: systemPrompt,
       messages: [{ role: 'user', content: userMessage }],
     })
-    return res.content[0].text
+    return response.content[0].text
   }
-  const res = await client.chat.completions.create({
-    model, max_tokens: 1024,
+  const response = await client.chat.completions.create({
+    model,
+    max_tokens: 1024,
     messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: userMessage }],
   })
-  return res.choices[0].message.content
+  return response.choices[0].message.content
 }
 
 function buildPrompt(data) {
-  const base = `Bạn là AI Mentor cho học sinh học C++ Competitive Programming. Trả lời bằng tiếng Việt, format Markdown.`
+  const base = `Bạn là AI Mentor cho học sinh học C++ Competitive Programming.
+Trả lời bằng tiếng Việt, format Markdown.
+Luôn chia phản hồi thành các mục ngắn:
+1. Root cause
+2. Patch đề xuất
+3. Test nên thử
+4. Câu hỏi follow-up
+Không đưa full lời giải hoàn chỉnh; chỉ đưa snippet nhỏ khi thật cần để sửa lỗi.`
+
   switch (data.verdict) {
     case 'WA':
       return {
-        system: base + ' Với Wrong Answer: chỉ ra logic sai, KHÔNG đưa lời giải hoàn chỉnh.',
-        user: `Bài: ${data.problemDescription}\n\nCode:\n\`\`\`cpp\n${data.code}\n\`\`\`\n\nInput bị sai:\n${data.failedTestInput}\nOutput của code:\n${data.failedTestOutput}`,
+        system: `${base}\nVới Wrong Answer: chỉ ra logic sai và test tái hiện, không viết lại toàn bộ lời giải.`,
+        user: `Bài:\n${data.problemDescription}\n\nCode:\n\`\`\`cpp\n${data.code}\n\`\`\`\n\nInput bị sai:\n${data.failedTestInput}\n\nOutput của code:\n${data.failedTestOutput}`,
       }
     case 'TLE':
       return {
-        system: base + ' Với TLE: chỉ ra đoạn code gây chậm, gợi ý cải thiện độ phức tạp, KHÔNG đưa lời giải.',
-        user: `Bài: ${data.problemDescription}\n\nCode:\n\`\`\`cpp\n${data.code}\n\`\`\`\n\nTime limit: ${data.timeLimitMs}ms`,
+        system: `${base}\nVới TLE: chỉ ra đoạn/chỗ có khả năng gây chậm, gợi ý giảm độ phức tạp.`,
+        user: `Bài:\n${data.problemDescription}\n\nCode:\n\`\`\`cpp\n${data.code}\n\`\`\`\n\nTime limit: ${data.timeLimitMs}ms`,
       }
     case 'MLE':
       return {
-        system: base + ' Với MLE: chỉ ra chỗ dùng nhiều bộ nhớ, gợi ý tối ưu.',
-        user: `Bài: ${data.problemDescription}\n\nCode:\n\`\`\`cpp\n${data.code}\n\`\`\``,
+        system: `${base}\nVới MLE: chỉ ra cấu trúc dữ liệu hoặc cấp phát có khả năng dùng quá nhiều bộ nhớ.`,
+        user: `Bài:\n${data.problemDescription}\n\nCode:\n\`\`\`cpp\n${data.code}\n\`\`\``,
       }
     case 'RE':
       return {
-        system: base + ' Với Runtime Error: phân tích nguyên nhân (out-of-bound, null ptr, overflow...).',
-        user: `Bài: ${data.problemDescription}\n\nCode:\n\`\`\`cpp\n${data.code}\n\`\`\``,
+        system: `${base}\nVới Runtime Error: phân tích out-of-bound, chia cho 0, recursion sâu, overflow hoặc input edge case.`,
+        user: `Bài:\n${data.problemDescription}\n\nCode:\n\`\`\`cpp\n${data.code}\n\`\`\``,
       }
     case 'CE':
       return {
-        system: base + ' Với Compile Error: giải thích lỗi compile rõ ràng cho học sinh.',
+        system: `${base}\nVới Compile Error: giải thích lỗi compile đầu tiên rõ ràng cho học sinh.`,
         user: `Code:\n\`\`\`cpp\n${data.code}\n\`\`\`\n\nLỗi compile:\n${data.compileError}`,
       }
     case 'AC':
       return {
-        system: base + ' Với Accepted: review code style C++, gợi ý cải thiện readability và efficiency.',
-        user: `Bài: ${data.problemDescription}\n\nCode:\n\`\`\`cpp\n${data.code}\n\`\`\``,
+        system: `${base}\nVới Accepted: review code style C++, readability, edge cases và cách chứng minh.`,
+        user: `Bài:\n${data.problemDescription}\n\nCode:\n\`\`\`cpp\n${data.code}\n\`\`\``,
       }
     default:
       return null
@@ -79,8 +89,12 @@ function buildPrompt(data) {
 }
 
 const feedbackTypeMap = {
-  WA: 'wa_hint', TLE: 'tle_hint', MLE: 'tle_hint',
-  RE: 'wa_hint', CE: 'ce_explain', AC: 'ac_review',
+  WA: 'wa_hint',
+  TLE: 'tle_hint',
+  MLE: 'tle_hint',
+  RE: 'wa_hint',
+  CE: 'ce_explain',
+  AC: 'ac_review',
 }
 
 if (process.env.LLM_API_KEY) {
@@ -106,13 +120,13 @@ if (process.env.LLM_API_KEY) {
           `submission:${data.submissionId}`,
           JSON.stringify({ aiFeedbackReady: true, feedbackType: feedbackTypeMap[data.verdict] })
         )
-      } catch (err) {
-        console.error('AI feedback failed:', err.message)
+      } catch (error) {
+        console.error('AI feedback failed:', error.message)
       }
     },
     { connection: redis }
   )
   console.log('AI feedback worker started')
 } else {
-  console.log('LLM_API_KEY not set — AI feedback worker skipped')
+  console.log('LLM_API_KEY not set - AI feedback worker skipped')
 }
