@@ -46,7 +46,7 @@ export default function AdminProblemsTable({ problems: initial }: { problems: Pr
     <>
       <div className="page-head">
         <div className="page-title"><h1>Quản lý bài tập</h1></div>
-        <Link href="/admin/problems/new" className="primary-btn">+ Thêm bài</Link>
+        <Link href="/admin/problems/new" prefetch={false} className="primary-btn">+ Thêm bài</Link>
       </div>
       <div className="table-card">
         <table>
@@ -77,7 +77,7 @@ export default function AdminProblemsTable({ problems: initial }: { problems: Pr
                 </td>
                 <td>
                   <div className="row">
-                    <Link href={`/admin/problems/${p.slug}/edit`} className="secondary-btn" style={{ fontSize: 12 }}>
+                    <Link href={`/admin/problems/${p.slug}/edit`} prefetch={false} className="secondary-btn" style={{ fontSize: 12 }}>
                       Sửa
                     </Link>
                     <button className="ghost-btn" style={{ fontSize: 12, color: 'var(--danger)' }} onClick={() => deleteProblem(p.slug)}>

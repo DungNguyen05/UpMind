@@ -3,6 +3,7 @@ import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import ProblemTable from '@/components/problems/ProblemTable'
 import Navbar from '@/components/layout/Navbar'
+import Providers from '@/app/providers'
 
 export const dynamic = 'force-dynamic'
 
@@ -43,14 +44,16 @@ export default async function ProblemsPage() {
   }))
 
   return (
-    <div className="app-shell">
-      <Navbar />
-      <main className="main">
-        <ProblemTable
-          initialProblems={initialProblems}
-          allTopics={topics.map((t) => ({ name: t.name, slug: t.slug }))}
-        />
-      </main>
-    </div>
+    <Providers session={session}>
+      <div className="app-shell">
+        <Navbar />
+        <main className="main">
+          <ProblemTable
+            initialProblems={initialProblems}
+            allTopics={topics.map((t) => ({ name: t.name, slug: t.slug }))}
+          />
+        </main>
+      </div>
+    </Providers>
   )
 }

@@ -1,9 +1,9 @@
 'use client'
 
 import { useState, useRef, useEffect, useCallback } from 'react'
-import ReactMarkdown from 'react-markdown'
 import { useToast } from '@/components/ui/Toast'
 import Badge from '@/components/ui/Badge'
+import LazyMarkdown from '@/components/ui/LazyMarkdown'
 import { getMentorNextStep, getPatchSuggestion, getRootCause } from '@/lib/mentor'
 import { readSseTextStream } from '@/lib/sse'
 
@@ -350,7 +350,7 @@ export default function AiPanel({
                 {latestSubmission.aiFeedbackLoading ? (
                   <p className="muted">Đang chờ Mentor phân tích submission mới...</p>
                 ) : latestSubmission.aiFeedback?.content ? (
-                  <ReactMarkdown>{latestSubmission.aiFeedback.content}</ReactMarkdown>
+                  <LazyMarkdown>{latestSubmission.aiFeedback.content}</LazyMarkdown>
                 ) : (
                   <p className="muted">Chưa có feedback từ LLM. Mentor vẫn có thể chat dựa trên verdict và code hiện tại.</p>
                 )}
@@ -392,7 +392,7 @@ export default function AiPanel({
             {messages.map((message, index) => (
               <div key={index} className={`message ${message.role === 'assistant' ? 'ai' : 'user'}`}>
                 {message.role === 'assistant' ? (
-                  <ReactMarkdown>{message.content || '...'}</ReactMarkdown>
+                  <LazyMarkdown>{message.content || '...'}</LazyMarkdown>
                 ) : (
                   <span>{message.content}</span>
                 )}
@@ -434,7 +434,7 @@ export default function AiPanel({
             <p className="muted">AI đang giải thích dòng code...</p>
           ) : walkthroughContent ? (
             <>
-              <ReactMarkdown>{walkthroughContent}</ReactMarkdown>
+              <LazyMarkdown>{walkthroughContent}</LazyMarkdown>
               <button
                 className="secondary-btn"
                 style={{ marginTop: 10 }}

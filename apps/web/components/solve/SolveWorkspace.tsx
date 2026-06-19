@@ -1,10 +1,10 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent } from 'react'
+import dynamic from 'next/dynamic'
 import ProblemPanel from './ProblemPanel'
-import Editor from './Editor'
-import AiPanel, { type MentorSubmission } from './AiPanel'
 import StatusBar from './StatusBar'
+import type { MentorSubmission } from './AiPanel'
 
 interface Problem {
   id: string
@@ -44,6 +44,51 @@ const MIN_CODE_WIDTH = 380
 const MIN_AI_WIDTH = 340
 const HANDLE_WIDTH = 1
 
+function EditorPlaceholder() {
+  return (
+    <div className="solve-col editor-workspace editor-loading">
+      <div className="editor-head">
+        <div className="row">
+          <span className="mono" style={{ fontSize: 13 }}>solution.cpp</span>
+          <span className="pill">C++17</span>
+        </div>
+        <div className="row">
+          <span className="skeleton" style={{ width: 38, height: 32 }} />
+          <span className="skeleton" style={{ width: 96, height: 32 }} />
+        </div>
+      </div>
+      <div className="editor-skeleton">
+        {Array.from({ length: 12 }).map((_, index) => (
+          <span key={index} style={{ width: `${index % 3 === 0 ? 72 : index % 3 === 1 ? 48 : 84}%` }} />
+        ))}
+      </div>
+    </div>
+  )
+}
+
+const Editor = dynamic(() => import('./Editor'), {
+  ssr: false,
+  loading: () => <EditorPlaceholder />,
+})
+
+const AiPanel = dynamic(() => import('./AiPanel'), {
+  ssr: false,
+  loading: () => (
+    <div className="solve-col ai mentor-workspace open">
+      <div className="mentor-head">
+        <div>
+          <span className="kicker">AI Mentor</span>
+          <h2>Loading Mentor...</h2>
+        </div>
+      </div>
+      <div className="ai-panel mentor-scroll">
+        <div className="skeleton" style={{ height: 92, marginBottom: 12 }} />
+        <div className="skeleton" style={{ height: 160 }} />
+      </div>
+    </div>
+  ),
+})
+
 function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max)
 }
@@ -57,6 +102,7 @@ export default function SolveWorkspace({ problem, userSubmissions, initialLatest
   const [walkthroughLine, setWalkthroughLine] = useState<WalkthroughLine | null>(null)
   const [currentCode, setCurrentCode] = useState('')
   const [aiOpen, setAiOpen] = useState(false)
+  const [editorBooted, setEditorBooted] = useState(false)
   const [paneWidths, setPaneWidths] = useState<{ problem?: number; ai?: number }>({})
 
   const handleCodeChange = useCallback((code: string) => {
@@ -85,6 +131,22 @@ export default function SolveWorkspace({ problem, userSubmissions, initialLatest
       copy[index] = nextRow
       return copy
     })
+  }, [])
+
+  useEffect(() => {
+    const bootEditor = () => setEditorBooted(true)
+    const idleWindow = window as Window & {
+      requestIdleCallback?: (callback: IdleRequestCallback, options?: IdleRequestOptions) => number
+      cancelIdleCallback?: (id: number) => void
+    }
+
+    if (idleWindow.requestIdleCallback) {
+      const id = idleWindow.requestIdleCallback(bootEditor, { timeout: 600 })
+      return () => idleWindow.cancelIdleCallback?.(id)
+    }
+
+    const id = window.setTimeout(bootEditor, 120)
+    return () => window.clearTimeout(id)
   }, [])
 
   useEffect(() => {
@@ -243,14 +305,18 @@ export default function SolveWorkspace({ problem, userSubmissions, initialLatest
           onPointerDown={startResize('problem')}
           onDoubleClick={resetPaneWidths}
         />
-        <Editor
-          problemId={problem.id}
-          problemSlug={problem.slug}
-          aiOpen={aiOpen}
-          onToggleAi={() => setAiOpen((open) => !open)}
-          onCodeChange={handleCodeChange}
-          onWalkthroughLine={handleWalkthroughLine}
-        />
+        {editorBooted ? (
+          <Editor
+            problemId={problem.id}
+            problemSlug={problem.slug}
+            aiOpen={aiOpen}
+            onToggleAi={() => setAiOpen((open) => !open)}
+            onCodeChange={handleCodeChange}
+            onWalkthroughLine={handleWalkthroughLine}
+          />
+        ) : (
+          <EditorPlaceholder />
+        )}
         {aiOpen && (
           <>
             <button

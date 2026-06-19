@@ -2,10 +2,9 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import ReactMarkdown from 'react-markdown'
+import LazyMarkdown from '@/components/ui/LazyMarkdown'
 import Badge from '@/components/ui/Badge'
-import { formatDistanceToNow } from 'date-fns'
-import { vi } from 'date-fns/locale'
+import { formatRelativeTime } from '@/lib/time'
 
 interface TestCase {
   input: string
@@ -70,7 +69,7 @@ export default function ProblemPanel({ problem, userSubmissions }: Props) {
             <span className="pill">Memory {problem.memoryLimitMb}MB</span>
           </div>
 
-          <ReactMarkdown className="problem-md">{problem.description}</ReactMarkdown>
+          <LazyMarkdown className="problem-md">{problem.description}</LazyMarkdown>
 
           {problem.testCases.length > 0 && (
             <section className="problem-examples">
@@ -115,10 +114,10 @@ export default function ProblemPanel({ problem, userSubmissions }: Props) {
                     <td><Badge verdict={submission.verdict} /></td>
                     <td className="mono">{submission.runtimeMs != null ? `${submission.runtimeMs}ms` : '—'}</td>
                     <td className="muted" style={{ fontSize: 12 }}>
-                      {formatDistanceToNow(new Date(submission.submittedAt), { locale: vi, addSuffix: true })}
+                      {formatRelativeTime(submission.submittedAt)}
                     </td>
                     <td>
-                      <Link href={`/submissions/${submission.id}`} className="ghost-btn" style={{ fontSize: 12 }}>
+                      <Link href={`/submissions/${submission.id}`} prefetch={false} className="ghost-btn" style={{ fontSize: 12 }}>
                         Review AI
                       </Link>
                     </td>

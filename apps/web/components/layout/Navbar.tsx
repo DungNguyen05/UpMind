@@ -19,19 +19,19 @@ export default function Navbar({ compact }: NavbarProps) {
   return (
     <header className={compact ? 'topbar compact-topbar' : 'topbar'}>
       <div className="nav-left">
-        <Link href="/problems" className="brand">
+        <Link href="/problems" prefetch={false} className="brand">
           <span className="logo-mark">&gt;_</span>
           <span>CP-Tutor</span>
         </Link>
         <nav className="nav-links">
-          <Link href="/problems" className={pathname.startsWith('/problems') ? 'active' : ''}>
+          <Link href="/problems" prefetch={false} className={pathname.startsWith('/problems') ? 'active' : ''}>
             Bài tập
           </Link>
-          <Link href="/submissions" className={pathname.startsWith('/submissions') ? 'active' : ''}>
+          <Link href="/submissions" prefetch={false} className={pathname.startsWith('/submissions') ? 'active' : ''}>
             Bài nộp của tôi
           </Link>
           {session?.user?.role === 'admin' && (
-            <Link href="/admin/problems" className={pathname.startsWith('/admin') ? 'active' : ''}>
+            <Link href="/admin/problems" prefetch={false} className={pathname.startsWith('/admin') ? 'active' : ''}>
               Admin
             </Link>
           )}

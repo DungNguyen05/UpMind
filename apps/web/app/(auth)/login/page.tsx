@@ -35,7 +35,7 @@ function LoginForm() {
 
   return (
     <main className="auth-shell">
-      <Link className="brand" href="/problems">
+      <Link className="brand" href="/problems" prefetch={false}>
         <span className="logo-mark">&gt;_</span>
         <span>CP-Tutor</span>
       </Link>
@@ -89,7 +89,7 @@ while (learning) {
           </div>
           <div className="helper-row">
             <span>Chưa có tài khoản?</span>
-            <Link href="/register">Đăng ký</Link>
+            <Link href="/register" prefetch={false}>Đăng ký</Link>
           </div>
         </form>
       </section>

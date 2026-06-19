@@ -62,6 +62,8 @@ const Editor = forwardRef<EditorRef, Props>(function Editor(
 ) {
   const editorRef = useRef<any>(null)
   const [code, setCode] = useState(() => readStoredCode(problemSlug))
+  const latestCodeRef = useRef(code)
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useImperativeHandle(ref, () => ({
     getValue: () => editorRef.current?.getValue() ?? code,
@@ -73,28 +75,49 @@ const Editor = forwardRef<EditorRef, Props>(function Editor(
     const nextCode = readStoredCode(problemSlug)
     setCode(nextCode)
     editorRef.current?.setValue(nextCode)
-    syncCode(nextCode)
+    syncCode(nextCode, true)
     localStorage.removeItem(prefillKey(problemSlug))
     // Run only when the route changes problem; regular edits are persisted in syncCode.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [problemSlug])
 
-  function syncCode(nextCode: string) {
+  useEffect(() => {
+    return () => {
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
+      persistCode(latestCodeRef.current)
+    }
+    // Persist any pending draft before leaving the problem/editor.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [problemSlug])
+
+  function persistCode(nextCode: string) {
     ;(window as any).__cpEditorValue = nextCode
     writeStorage(localStorage, draftKey(problemSlug), nextCode)
     writeStorage(sessionStorage, draftKey(problemSlug), nextCode)
     writeStorage(sessionStorage, 'cp-editor-code', nextCode)
     writeStorage(sessionStorage, 'cp-editor-code-slug', problemSlug)
+  }
+
+  function syncCode(nextCode: string, flush = false) {
+    latestCodeRef.current = nextCode
+    ;(window as any).__cpEditorValue = nextCode
     onCodeChange?.(nextCode)
+
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
+    if (flush) {
+      persistCode(nextCode)
+      return
+    }
+
+    saveTimerRef.current = setTimeout(() => {
+      persistCode(latestCodeRef.current)
+      saveTimerRef.current = null
+    }, 350)
   }
 
   const handleMount: OnMount = (editor, monaco) => {
     editorRef.current = editor
-    syncCode(editor.getValue())
-
-    editor.onDidChangeModelContent(() => {
-      syncCode(editor.getValue())
-    })
+    syncCode(editor.getValue(), true)
 
     monaco.editor.defineTheme('cp-dark', {
       base: 'vs-dark',
@@ -120,7 +143,7 @@ const Editor = forwardRef<EditorRef, Props>(function Editor(
     if (confirm('Reset code về template ban đầu?')) {
       setCode(CPP_TEMPLATE)
       editorRef.current?.setValue(CPP_TEMPLATE)
-      syncCode(CPP_TEMPLATE)
+      syncCode(CPP_TEMPLATE, true)
     }
   }
 

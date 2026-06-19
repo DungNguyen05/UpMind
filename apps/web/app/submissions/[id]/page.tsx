@@ -3,11 +3,10 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import dynamic from 'next/dynamic'
 import Navbar from '@/components/layout/Navbar'
 import Badge from '@/components/ui/Badge'
-import SubmissionMentorReview from '@/components/submissions/SubmissionMentorReview'
-import { formatDistanceToNow } from 'date-fns'
-import { vi } from 'date-fns/locale'
+import { formatRelativeTime } from '@/lib/time'
 
 interface Submission {
   id: string
@@ -23,6 +22,16 @@ interface Submission {
   problem: { title: string; slug: string }
   aiFeedback: { content: string; feedbackType: string } | null
 }
+
+const SubmissionMentorReview = dynamic(() => import('@/components/submissions/SubmissionMentorReview'), {
+  ssr: false,
+  loading: () => (
+    <aside className="panel mentor-review">
+      <div className="skeleton" style={{ height: 120, marginBottom: 12 }} />
+      <div className="skeleton" style={{ height: 220 }} />
+    </aside>
+  ),
+})
 
 function memoryText(memoryKb: number | null) {
   return memoryKb != null ? `${Math.round(memoryKb / 1024)}MB` : '—'
@@ -58,12 +67,12 @@ export default function SubmissionDetailPage({ params }: { params: { id: string 
       <main className="main wide-main">
         <div className="page-head">
           <div className="page-title">
-            <Link className="muted" href="/submissions" style={{ fontSize: 13 }}>← Quay lại lịch sử</Link>
+            <Link className="muted" href="/submissions" prefetch={false} style={{ fontSize: 13 }}>← Quay lại lịch sử</Link>
             <h1 style={{ marginTop: 6 }}>
               {submission.problem.title} <Badge verdict={submission.verdict} />
             </h1>
             <p className="muted" style={{ marginTop: 4 }}>
-              {formatDistanceToNow(new Date(submission.submittedAt), { locale: vi, addSuffix: true })} · {submission.language}
+              {formatRelativeTime(submission.submittedAt)} · {submission.language}
             </p>
           </div>
           <button className="primary-btn" onClick={useCode}>Dùng code này</button>

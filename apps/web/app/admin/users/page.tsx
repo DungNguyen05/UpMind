@@ -3,8 +3,7 @@
 import { useState, useEffect } from 'react'
 import Navbar from '@/components/layout/Navbar'
 import { useToast } from '@/components/ui/Toast'
-import { formatDistanceToNow } from 'date-fns'
-import { vi } from 'date-fns/locale'
+import { formatRelativeTime } from '@/lib/time'
 
 interface User {
   id: string
@@ -90,7 +89,7 @@ export default function AdminUsersPage() {
                     </td>
                     <td className="mono">{u._count.submissions}</td>
                     <td className="muted" style={{ fontSize: 12 }}>
-                      {formatDistanceToNow(new Date(u.createdAt), { locale: vi, addSuffix: true })}
+                      {formatRelativeTime(u.createdAt)}
                     </td>
                   </tr>
                 ))}

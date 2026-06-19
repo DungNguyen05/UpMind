@@ -4,6 +4,7 @@ import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import Navbar from '@/components/layout/Navbar'
 import SolveWorkspace from '@/components/solve/SolveWorkspace'
+import Providers from '@/app/providers'
 
 export const dynamic = 'force-dynamic'
 
@@ -93,13 +94,15 @@ export default async function SolvePage({ params }: Props) {
   }
 
   return (
-    <div className="solve-page">
-      <Navbar compact />
-      <SolveWorkspace
-        problem={problemData}
-        userSubmissions={userSubmissions}
-        initialLatestSubmission={latestSubmission}
-      />
-    </div>
+    <Providers session={session}>
+      <div className="solve-page">
+        <Navbar compact />
+        <SolveWorkspace
+          problem={problemData}
+          userSubmissions={userSubmissions}
+          initialLatestSubmission={latestSubmission}
+        />
+      </div>
+    </Providers>
   )
 }

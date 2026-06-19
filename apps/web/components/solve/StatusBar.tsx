@@ -154,12 +154,7 @@ export default function StatusBar({ problemId, onSubmissionUpdate }: Props) {
   }
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      const code = (window as any).__cpEditorValue
-      if (code) sessionStorage.setItem('cp-editor-code', code)
-    }, 500)
     return () => {
-      clearInterval(interval)
       esRef.current?.close()
     }
   }, [])

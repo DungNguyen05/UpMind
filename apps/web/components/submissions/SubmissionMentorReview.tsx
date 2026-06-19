@@ -1,8 +1,8 @@
 'use client'
 
 import { useRef, useState, useEffect } from 'react'
-import ReactMarkdown from 'react-markdown'
 import Badge from '@/components/ui/Badge'
+import LazyMarkdown from '@/components/ui/LazyMarkdown'
 import { useToast } from '@/components/ui/Toast'
 import { getMentorNextStep, getPatchSuggestion, getReviewFocus, getRootCause } from '@/lib/mentor'
 import { readSseTextStream } from '@/lib/sse'
@@ -129,7 +129,7 @@ export default function SubmissionMentorReview({ submission }: Props) {
         <h3>Patch Mentor đề xuất</h3>
         <div className="mentor-answer">
           {submission.aiFeedback?.content ? (
-            <ReactMarkdown>{submission.aiFeedback.content}</ReactMarkdown>
+            <LazyMarkdown>{submission.aiFeedback.content}</LazyMarkdown>
           ) : (
             getPatchSuggestion(submission)
           )}
@@ -185,7 +185,7 @@ export default function SubmissionMentorReview({ submission }: Props) {
           )}
           {messages.map((message, index) => (
             <div key={index} className={`message ${message.role === 'assistant' ? 'ai' : 'user'}`}>
-              {message.role === 'assistant' ? <ReactMarkdown>{message.content || '...'}</ReactMarkdown> : message.content}
+              {message.role === 'assistant' ? <LazyMarkdown>{message.content || '...'}</LazyMarkdown> : message.content}
             </div>
           ))}
           <div ref={messagesEndRef} />

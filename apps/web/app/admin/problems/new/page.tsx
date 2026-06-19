@@ -2,10 +2,10 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import ReactMarkdown from 'react-markdown'
 import Navbar from '@/components/layout/Navbar'
 import TestCaseEditor from '@/components/admin/TestCaseEditor'
 import { useToast } from '@/components/ui/Toast'
+import LazyMarkdown from '@/components/ui/LazyMarkdown'
 
 interface TestCase { input: string; expectedOutput: string; isSample: boolean }
 
@@ -116,7 +116,7 @@ export default function NewProblemPage() {
             <div className="section-title">Preview</div>
             <div className="markdown-preview">
               <h2>{title || 'Tiêu đề bài'}</h2>
-              <ReactMarkdown>{description || '*Đề bài sẽ hiện ở đây...*'}</ReactMarkdown>
+              <LazyMarkdown>{description || '*Đề bài sẽ hiện ở đây...*'}</LazyMarkdown>
             </div>
           </div>
         </div>

@@ -5,8 +5,7 @@ import Link from 'next/link'
 import Navbar from '@/components/layout/Navbar'
 import Badge from '@/components/ui/Badge'
 import { getMentorNextStep } from '@/lib/mentor'
-import { formatDistanceToNow } from 'date-fns'
-import { vi } from 'date-fns/locale'
+import { formatRelativeTime } from '@/lib/time'
 
 interface Submission {
   id: string
@@ -92,10 +91,10 @@ export default function SubmissionsPage() {
                 {submissions.map((submission) => (
                   <tr key={submission.id} data-row>
                     <td className="muted" style={{ fontSize: 12 }}>
-                      {formatDistanceToNow(new Date(submission.submittedAt), { locale: vi, addSuffix: true })}
+                      {formatRelativeTime(submission.submittedAt)}
                     </td>
                     <td>
-                      <Link href={`/problems/${submission.problem.slug}`} style={{ fontWeight: 700 }}>
+                      <Link href={`/problems/${submission.problem.slug}`} prefetch={false} style={{ fontWeight: 700 }}>
                         {submission.problem.title}
                       </Link>
                     </td>

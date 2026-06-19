@@ -1,61 +1,8 @@
-'use client'
-
-import { useEffect } from 'react'
 import Link from 'next/link'
+import LandingInteractions from './LandingInteractions'
 import './landing.css'
 
 export default function LandingPage() {
-  useEffect(() => {
-    const featSection = document.querySelector<HTMLElement>('.feat-scroll')
-    const featTexts = Array.from(document.querySelectorAll<HTMLElement>('.feat-text'))
-    const featAnims = Array.from(document.querySelectorAll<HTMLElement>('.feat-anim'))
-    const featDots = Array.from(document.querySelectorAll<HTMLElement>('.feat-dot'))
-
-    if (!featSection) return
-
-    let currentStep = 0
-
-    const setStep = (step: number) => {
-      if (step === currentStep) return
-      currentStep = step
-      featTexts.forEach((el, i) => el.classList.toggle('is-active', i === step))
-      featDots.forEach((el, i) => el.classList.toggle('is-active', i === step))
-      featAnims.forEach(el => el.classList.remove('is-active'))
-      void featSection.offsetHeight
-      featAnims.forEach((el, i) => { if (i === step) el.classList.add('is-active') })
-    }
-
-    const onScroll = () => {
-      const rect = featSection.getBoundingClientRect()
-      const total = featSection.offsetHeight - window.innerHeight
-      const scrolled = Math.max(0, -rect.top)
-      const progress = Math.min(1, scrolled / Math.max(1, total))
-      const step = Math.min(featAnims.length - 1, Math.floor(progress * featAnims.length))
-      setStep(step)
-    }
-
-    const dotListeners: (() => void)[] = []
-    featDots.forEach((dot, i) => {
-      const listener = () => {
-        const total = featSection.offsetHeight - window.innerHeight
-        const targetY = featSection.offsetTop + total * (i / featAnims.length) + 1
-        window.scrollTo({ top: targetY, behavior: 'smooth' })
-      }
-      dot.addEventListener('click', listener)
-      dotListeners.push(listener)
-    })
-
-    window.addEventListener('scroll', onScroll, { passive: true })
-    window.addEventListener('resize', onScroll, { passive: true })
-    onScroll()
-
-    return () => {
-      window.removeEventListener('scroll', onScroll)
-      window.removeEventListener('resize', onScroll)
-      featDots.forEach((dot, i) => dot.removeEventListener('click', dotListeners[i]))
-    }
-  }, [])
-
   return (
     <>
       {/* ══════════ HERO ══════════ */}
@@ -64,7 +11,7 @@ export default function LandingPage() {
           <div className="side-orb" aria-hidden="true"></div>
 
           <nav className="nav">
-            <Link className="brand" href="/">
+            <Link className="brand" href="/" prefetch={false}>
               <span className="brand-mark">&gt;_</span>
               <span>CP-Tutor</span>
             </Link>
@@ -74,8 +21,8 @@ export default function LandingPage() {
               <a href="#start">Bắt đầu</a>
             </div>
             <div className="nav-auth">
-              <Link className="nav-login" href="/login">Đăng nhập</Link>
-              <Link className="nav-cta" href="/register">Đăng ký</Link>
+              <Link className="nav-login" href="/login" prefetch={false}>Đăng nhập</Link>
+              <Link className="nav-cta" href="/register" prefetch={false}>Đăng ký</Link>
             </div>
           </nav>
 
@@ -85,7 +32,7 @@ export default function LandingPage() {
               <h1>Luyện C++ CP với chấm bài và AI Mentor</h1>
               <p className="lead">CP-Tutor giúp học sinh đọc đề, viết C++17, nộp bài và nhận phân tích từ AI ngay trong một workspace gọn như IDE.</p>
               <div className="actions">
-                <Link className="btn btn-primary" href="/register">Bắt đầu luyện C++</Link>
+                <Link className="btn btn-primary" href="/register" prefetch={false}>Bắt đầu luyện C++</Link>
                 <a className="btn btn-secondary" href="#features">Xem AI Mentor</a>
               </div>
             </div>
@@ -374,10 +321,11 @@ export default function LandingPage() {
         <h2>Sẵn sàng luyện C++ với feedback rõ như một buổi review code?</h2>
         <p>Tạo tài khoản để bắt đầu làm bài, nộp C++17 và nhận phân tích từ AI Mentor ngay sau mỗi verdict.</p>
         <div className="actions cta-actions">
-          <Link className="btn btn-primary" href="/register">Đăng ký ngay</Link>
-          <Link className="btn btn-secondary" href="/login">Đăng nhập</Link>
+          <Link className="btn btn-primary" href="/register" prefetch={false}>Đăng ký ngay</Link>
+          <Link className="btn btn-secondary" href="/login" prefetch={false}>Đăng nhập</Link>
         </div>
       </section>
+      <LandingInteractions />
     </>
   )
 }

@@ -53,7 +53,7 @@ export default function RegisterPage() {
 
   return (
     <main className="auth-shell">
-      <Link className="brand" href="/problems">
+      <Link className="brand" href="/problems" prefetch={false}>
         <span className="logo-mark">&gt;_</span>
         <span>CP-Tutor</span>
       </Link>
@@ -136,7 +136,7 @@ while (learning) {
           </div>
           <div className="helper-row">
             <span>Đã có tài khoản?</span>
-            <Link href="/login">Đăng nhập</Link>
+            <Link href="/login" prefetch={false}>Đăng nhập</Link>
           </div>
         </form>
       </section>

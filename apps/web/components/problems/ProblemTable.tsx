@@ -35,6 +35,7 @@ export default function ProblemTable({ initialProblems, allTopics }: Props) {
   const [topicOpen, setTopicOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const topicPickerRef = useRef<HTMLDivElement>(null)
+  const hasMountedRef = useRef(false)
 
   const fetchProblems = useCallback(async () => {
     setLoading(true)
@@ -52,6 +53,10 @@ export default function ProblemTable({ initialProblems, allTopics }: Props) {
   }, [search, difficulty, activeTopics])
 
   useEffect(() => {
+    if (!hasMountedRef.current) {
+      hasMountedRef.current = true
+      return
+    }
     const t = setTimeout(fetchProblems, 300)
     return () => clearTimeout(t)
   }, [fetchProblems])
@@ -273,7 +278,7 @@ export default function ProblemTable({ initialProblems, allTopics }: Props) {
                   </td>
                   <td className="mono muted">{i + 1}</td>
                   <td>
-                    <Link href={`/problems/${p.slug}`} className="problem-name">
+                    <Link href={`/problems/${p.slug}`} prefetch={false} className="problem-name">
                       {p.title}
                     </Link>
                     <div className="sub-tags">
