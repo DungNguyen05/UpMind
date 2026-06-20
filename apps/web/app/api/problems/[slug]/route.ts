@@ -8,11 +8,15 @@ export const dynamic = 'force-dynamic'
 export async function GET(req: Request, { params }: { params: { slug: string } }) {
   try {
     const session = await getServerSession(authOptions)
+    const isAdmin = session?.user?.role === 'admin'
     const problem = await prisma.problem.findUnique({
       where: { slug: params.slug },
       include: {
         topics: { include: { topic: true } },
-        testCases: { where: { isSample: true }, orderBy: { orderIndex: 'asc' } },
+        testCases: {
+          ...(isAdmin ? {} : { where: { isSample: true } }),
+          orderBy: { orderIndex: 'asc' },
+        },
       },
     })
     if (!problem) return NextResponse.json({ error: 'Không tìm thấy' }, { status: 404 })

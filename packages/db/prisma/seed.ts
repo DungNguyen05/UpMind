@@ -151,6 +151,144 @@ Một số nguyên — độ dài LIS.
     ],
   })
 
+  const slidingWindowMinimum = await prisma.problem.upsert({
+    where: { slug: 'sliding-window-minimum' },
+    update: {
+      title: 'Sliding Window Minimum',
+      difficulty: 'medium',
+      timeLimitMs: 1000,
+      memoryLimitMb: 256,
+      isPublished: true,
+      description: `## Mô tả
+Cho một dãy \`A\` gồm \`N\` phần tử, được đánh số từ \`1\` đến \`N\`. Phần tử thứ \`i\` có giá trị là \`A[i]\`.
+
+Cho \`k\` là một số nguyên dương (\`k <= N\`). Với mỗi vị trí \`i\` (\`k <= i <= N\`), hãy tìm giá trị nhỏ nhất của các phần tử trong đoạn từ \`i - k + 1\` đến \`i\`.
+
+Nói cách khác:
+
+\`\`\`
+minRange[i] = min(A[i - k + 1], A[i - k + 2], ..., A[i])
+\`\`\`
+
+## Input
+- Dòng 1: hai số nguyên dương \`N\` và \`k\` (\`N <= 100000\`, \`k <= N\`)
+- Dòng 2: \`N\` số nguyên dương \`A[1], A[2], ..., A[N]\` (\`A[i] <= 10^9\`)
+
+## Output
+In ra \`N - k + 1\` dòng. Dòng thứ \`j\` là giá trị nhỏ nhất trong cửa sổ độ dài \`k\` kết thúc tại vị trí \`i = k + j - 1\`.
+
+## Ví dụ
+### Input
+\`\`\`
+8 4
+1 3 5 7 4 5 9 5
+\`\`\`
+
+### Output
+\`\`\`
+1
+3
+4
+4
+4
+\`\`\`
+
+## Ràng buộc
+\`\`\`
+1 <= k <= N <= 100000
+1 <= A[i] <= 10^9
+\`\`\``,
+    },
+    create: {
+      title: 'Sliding Window Minimum',
+      slug: 'sliding-window-minimum',
+      difficulty: 'medium',
+      timeLimitMs: 1000,
+      memoryLimitMb: 256,
+      isPublished: true,
+      createdById: admin.id,
+      description: `## Mô tả
+Cho một dãy \`A\` gồm \`N\` phần tử, được đánh số từ \`1\` đến \`N\`. Phần tử thứ \`i\` có giá trị là \`A[i]\`.
+
+Cho \`k\` là một số nguyên dương (\`k <= N\`). Với mỗi vị trí \`i\` (\`k <= i <= N\`), hãy tìm giá trị nhỏ nhất của các phần tử trong đoạn từ \`i - k + 1\` đến \`i\`.
+
+Nói cách khác:
+
+\`\`\`
+minRange[i] = min(A[i - k + 1], A[i - k + 2], ..., A[i])
+\`\`\`
+
+## Input
+- Dòng 1: hai số nguyên dương \`N\` và \`k\` (\`N <= 100000\`, \`k <= N\`)
+- Dòng 2: \`N\` số nguyên dương \`A[1], A[2], ..., A[N]\` (\`A[i] <= 10^9\`)
+
+## Output
+In ra \`N - k + 1\` dòng. Dòng thứ \`j\` là giá trị nhỏ nhất trong cửa sổ độ dài \`k\` kết thúc tại vị trí \`i = k + j - 1\`.
+
+## Ví dụ
+### Input
+\`\`\`
+8 4
+1 3 5 7 4 5 9 5
+\`\`\`
+
+### Output
+\`\`\`
+1
+3
+4
+4
+4
+\`\`\`
+
+## Ràng buộc
+\`\`\`
+1 <= k <= N <= 100000
+1 <= A[i] <= 10^9
+\`\`\``,
+    },
+  })
+  await prisma.problemTopic.createMany({
+    data: [
+      { problemId: slidingWindowMinimum.id, topicId: topics['array'].id },
+      { problemId: slidingWindowMinimum.id, topicId: topics['stack-queue'].id },
+    ],
+    skipDuplicates: true,
+  })
+  await prisma.testCase.deleteMany({ where: { problemId: slidingWindowMinimum.id } })
+  await prisma.testCase.createMany({
+    data: [
+      {
+        problemId: slidingWindowMinimum.id,
+        input: '8 4\n1 3 5 7 4 5 9 5',
+        expectedOutput: '1\n3\n4\n4\n4',
+        isSample: true,
+        orderIndex: 0,
+      },
+      {
+        problemId: slidingWindowMinimum.id,
+        input: '5 1\n10 2 7 3 9',
+        expectedOutput: '10\n2\n7\n3\n9',
+        isSample: false,
+        orderIndex: 1,
+      },
+      {
+        problemId: slidingWindowMinimum.id,
+        input: '6 6\n8 6 7 3 9 4',
+        expectedOutput: '3',
+        isSample: false,
+        orderIndex: 2,
+      },
+      {
+        problemId: slidingWindowMinimum.id,
+        input: '12 5\n9 4 4 8 2 6 2 7 3 5 1 10',
+        expectedOutput: '2\n2\n2\n2\n2\n2\n1\n1',
+        isSample: false,
+        orderIndex: 3,
+      },
+    ],
+  })
+
   const sp = await prisma.problem.upsert({
     where: { slug: 'shortest-path-queries' },
     update: {},
@@ -203,7 +341,7 @@ q dòng, mỗi dòng in đường đi ngắn nhất hoặc -1 nếu không tồn
   console.log('Seed complete:', {
     admin: admin.username,
     student: student.username,
-    problems: 3,
+    problems: 4,
     topics: topicData.length,
   })
 }

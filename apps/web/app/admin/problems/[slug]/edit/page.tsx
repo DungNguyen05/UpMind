@@ -9,6 +9,11 @@ import LazyMarkdown from '@/components/ui/LazyMarkdown'
 
 interface TestCase { input: string; expectedOutput: string; isSample: boolean }
 
+async function getErrorMessage(res: Response) {
+  const data = await res.json().catch(() => null)
+  return data?.error ?? 'Save failed'
+}
+
 export default function EditProblemPage({ params }: { params: { slug: string } }) {
   const router = useRouter()
   const toast = useToast()
@@ -34,19 +39,31 @@ export default function EditProblemPage({ params }: { params: { slug: string } }
     try {
       const body: any = { title, difficulty, timeLimitMs, memoryLimitMb, description }
       if (publish !== undefined) body.isPublished = publish
-      await fetch(`/api/problems/${params.slug}`, {
+      const problemRes = await fetch(`/api/problems/${params.slug}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       })
+      if (!problemRes.ok) throw new Error(await getErrorMessage(problemRes))
+
+      const testCaseRes = await fetch(`/api/problems/${params.slug}/testcases`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ testCases }),
+      })
+      if (!testCaseRes.ok) throw new Error(await getErrorMessage(testCaseRes))
       toast('Đã lưu!', 'success')
       router.push('/admin/problems')
+    } catch (err: any) {
+      toast(err.message ?? 'Save failed', 'error')
     } finally {
       setSaving(false)
     }
   }
 
   if (loading) return <div style={{ padding: 40, textAlign: 'center', color: 'var(--muted)' }}>Đang tải...</div>
+
+  const sampleTestCases = testCases.filter((tc) => tc.isSample)
 
   return (
     <div className="app-shell">
@@ -86,6 +103,26 @@ export default function EditProblemPage({ params }: { params: { slug: string } }
             <div className="markdown-preview">
               <h2>{title}</h2>
               <LazyMarkdown>{description}</LazyMarkdown>
+              {sampleTestCases.length > 0 && (
+                <section className="problem-examples">
+                  {sampleTestCases.map((testCase, index) => (
+                    <div key={index} className="problem-example">
+                      <h3>Sample {index + 1}</h3>
+                      <pre id={`admin-sample-${index + 1}`}>{testCase.input}</pre>
+                      <button
+                        className="copy-btn ghost-btn"
+                        type="button"
+                        onClick={() => navigator.clipboard?.writeText(testCase.input)}
+                      >
+                        Copy
+                      </button>
+                      <p className="muted">
+                        Output: <code>{testCase.expectedOutput}</code>
+                      </p>
+                    </div>
+                  ))}
+                </section>
+              )}
             </div>
           </div>
         </div>
