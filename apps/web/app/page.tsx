@@ -39,10 +39,9 @@ export default function LandingPage() {
 
             <div className="visual">
               <div className="visual-halo" aria-hidden="true"></div>
-              <div className="judge-3d" aria-hidden="true">
+              <div className="parallax-rig" aria-hidden="true">
+              <div className="judge-3d">
                 <div className="platform"></div>
-                <div className="orbit"></div>
-                <div className="mentor-orb"></div>
                 <div className="doc-card">
                   <div className="doc-head">
                     <span className="doc-icon">OJ</span>
@@ -51,7 +50,6 @@ export default function LandingPage() {
                   <div className="doc-lines">
                     <span></span><span></span><span></span>
                   </div>
-                  <div className="signature">#include</div>
                 </div>
                 <div className="code-card">
                   <div className="code-title"><span>solution.cpp</span><span className="cpp-pill">C++17</span></div>
@@ -76,6 +74,7 @@ export default function LandingPage() {
                   <div className="verdict-chip"><span>WA</span> Test 7</div>
                   <div className="trace-chip"><span>tracking</span><small>line 04 → output diff</small></div>
                 </div>
+              </div>
               </div>
             </div>
           </section>
