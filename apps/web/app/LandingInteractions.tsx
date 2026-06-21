@@ -23,9 +23,30 @@ export default function LandingInteractions() {
     let flat = 0
     let isHovered = false
     let t = 0, lastTs = 0, rafId = 0
+    let rigScale = 1.3
+    let rigOffsetX = -30
+    let rigRotateX = 58
+    let rigRotateZ = -28
+    let cardRotateX = -58
+    let cardRotateZ = 28
 
     // Stop CSS animations that set `transform` (would conflict with inline style)
     visual.classList.add('js-animated')
+
+    const readCssNumber = (el: HTMLElement, prop: string, fallback: number) => {
+      const value = window.getComputedStyle(el).getPropertyValue(prop)
+      const parsed = Number.parseFloat(value)
+      return Number.isFinite(parsed) ? parsed : fallback
+    }
+
+    const syncResponsiveMotion = () => {
+      rigScale = readCssNumber(judge, '--rig-scale', 1.3)
+      rigOffsetX = readCssNumber(visual, '--rig-offset-x', -30)
+      rigRotateX = readCssNumber(judge, '--rig-rotate-x', 58)
+      rigRotateZ = readCssNumber(judge, '--rig-rotate-z', -28)
+      cardRotateX = readCssNumber(judge, '--card-rotate-x', -rigRotateX)
+      cardRotateZ = readCssNumber(judge, '--card-rotate-z', -rigRotateZ)
+    }
 
     const tick = (now: number) => {
       const dt = lastTs ? Math.min((now - lastTs) / 1000, 0.05) : 0
@@ -40,36 +61,36 @@ export default function LandingInteractions() {
 
       // Parallax rig: mouse tilt + centering offset (isometric cluster sits low → shift up)
       const centerY = lerp(0, 0, flat)
-      const centerX = lerp(-30, 0, flat)
+      const centerX = lerp(rigOffsetX, 0, flat)
       rig.style.transform = `translateX(${centerX}px) translateY(${centerY}px) rotateX(${my * -3.5}deg) rotateY(${mx * 4.5}deg)`
 
       // Judge-3d: isometric → flat + float oscillation (amplitudes ×0.5)
       const floatY = osc(t, 7.8) * 6.5 * inv
       const floatZ = osc(t, 7.8) * 13 * inv
-      judge.style.transform = `rotateX(${lerp(58, 0, flat)}deg) rotateZ(${lerp(-28, 0, flat)}deg) scale(1.3) translate3d(0,${-floatY}px,${floatZ}px)`
+      judge.style.transform = `rotateX(${lerp(rigRotateX, 0, flat)}deg) rotateZ(${lerp(rigRotateZ, 0, flat)}deg) scale(${rigScale}) translate3d(0,${-floatY}px,${floatZ}px)`
 
       // Doc card  CSS(214,38) → flat(221,0)
       if (docCard) {
         const bob = osc(t, 6.76) * 4 * inv
-        docCard.style.transform = `translateX(${lerp(0, 7, flat)}px) translateY(${lerp(0, -38, flat) - bob}px) translateZ(${lerp(118, 60, flat)}px) rotateX(${lerp(-58, 0, flat)}deg) rotateZ(${lerp(28, 0, flat)}deg) rotateY(${lerp(-9, 0, flat)}deg)`
+        docCard.style.transform = `translateX(${lerp(0, 7, flat)}px) translateY(${lerp(0, -38, flat) - bob}px) translateZ(${lerp(118, 60, flat)}px) rotateX(${lerp(cardRotateX, 0, flat)}deg) rotateZ(${lerp(cardRotateZ, 0, flat)}deg) rotateY(${lerp(-9, 0, flat)}deg)`
       }
 
       // Code card  CSS(88,120) → flat(16,0)
       if (codeCard) {
         const bob = osc(t, 5.98) * 3.5 * inv
-        codeCard.style.transform = `translateX(${lerp(0, -72, flat)}px) translateY(${lerp(0, -120, flat) + bob}px) translateZ(${lerp(96, 40, flat)}px) rotateX(${lerp(-58, 0, flat)}deg) rotateZ(${lerp(28, 0, flat)}deg) rotateY(${lerp(7, 0, flat)}deg)`
+        codeCard.style.transform = `translateX(${lerp(0, -72, flat)}px) translateY(${lerp(0, -120, flat) + bob}px) translateZ(${lerp(96, 40, flat)}px) rotateX(${lerp(cardRotateX, 0, flat)}deg) rotateZ(${lerp(cardRotateZ, 0, flat)}deg) rotateY(${lerp(7, 0, flat)}deg)`
       }
 
       // AI card  CSS(~260,~224) → flat(130,154)
       if (aiCard) {
         const bob = osc(t, 7.54) * 3.5 * inv
-        aiCard.style.transform = `translateX(${lerp(0, -130, flat)}px) translateY(${lerp(0, -70, flat) - bob}px) translateZ(${lerp(106, 50, flat)}px) rotateX(${lerp(-58, 0, flat)}deg) rotateZ(${lerp(28, 0, flat)}deg) rotateY(${lerp(-7, 0, flat)}deg)`
+        aiCard.style.transform = `translateX(${lerp(0, -130, flat)}px) translateY(${lerp(0, -70, flat) - bob}px) translateZ(${lerp(106, 50, flat)}px) rotateX(${lerp(cardRotateX, 0, flat)}deg) rotateZ(${lerp(cardRotateZ, 0, flat)}deg) rotateY(${lerp(-7, 0, flat)}deg)`
       }
 
       // Review stack  CSS(44,375) → flat(60,284)
       if (revStack) {
         const bob = osc(t, 6.63) * 4 * inv
-        revStack.style.transform = `translateX(${lerp(0, 16, flat)}px) translateY(${lerp(0, -91, flat) - bob}px) translateZ(${lerp(70, 20, flat)}px) rotateX(${lerp(-58, 0, flat)}deg) rotateZ(${lerp(28, 0, flat)}deg) rotateY(${lerp(-4, 0, flat)}deg)`
+        revStack.style.transform = `translateX(${lerp(0, 16, flat)}px) translateY(${lerp(0, -91, flat) - bob}px) translateZ(${lerp(70, 20, flat)}px) rotateX(${lerp(cardRotateX, 0, flat)}deg) rotateZ(${lerp(cardRotateZ, 0, flat)}deg) rotateY(${lerp(-4, 0, flat)}deg)`
       }
 
       rafId = requestAnimationFrame(tick)
@@ -83,9 +104,11 @@ export default function LandingInteractions() {
     const onEnter = () => { isHovered = true;  visual.classList.add('is-hovered') }
     const onLeave = () => { isHovered = false; visual.classList.remove('is-hovered') }
 
+    syncResponsiveMotion()
     visual.addEventListener('mousemove',  onMove)
     visual.addEventListener('mouseenter', onEnter)
     visual.addEventListener('mouseleave', onLeave)
+    window.addEventListener('resize', syncResponsiveMotion, { passive: true })
 
     rafId = requestAnimationFrame(tick)
 
@@ -93,6 +116,7 @@ export default function LandingInteractions() {
       visual.removeEventListener('mousemove',  onMove)
       visual.removeEventListener('mouseenter', onEnter)
       visual.removeEventListener('mouseleave', onLeave)
+      window.removeEventListener('resize', syncResponsiveMotion)
       cancelAnimationFrame(rafId)
       visual.classList.remove('js-animated')
       for (const el of [rig, judge, docCard, codeCard, aiCard, revStack]) {
