@@ -28,7 +28,7 @@ Cách khuyên dùng khi phát triển: chỉ chạy DB và Redis trong Docker, N
 ### 1. Khởi động infrastructure
 
 ```bash
-docker compose up postgres redis -d
+docker compose up postgres redis judge -d
 ```
 
 ### 2. Cài dependency (lần đầu)
