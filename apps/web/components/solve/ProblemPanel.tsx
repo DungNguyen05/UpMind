@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import LazyMarkdown from '@/components/ui/LazyMarkdown'
+import ProblemExamples from '@/components/ui/ProblemExamples'
 import Badge from '@/components/ui/Badge'
 import { formatRelativeTime } from '@/lib/time'
 
@@ -71,26 +72,7 @@ export default function ProblemPanel({ problem, userSubmissions }: Props) {
 
           <LazyMarkdown className="problem-md">{problem.description}</LazyMarkdown>
 
-          {problem.testCases.length > 0 && (
-            <section className="problem-examples">
-              {problem.testCases.map((testCase, index) => (
-                <div key={index} className="problem-example">
-                  <h3>Ví dụ {index + 1}</h3>
-                  <pre id={`sample-${index + 1}`}>{testCase.input}</pre>
-                  <button
-                    className="copy-btn ghost-btn"
-                    type="button"
-                    onClick={() => navigator.clipboard?.writeText(testCase.input)}
-                  >
-                    Copy
-                  </button>
-                  <p className="muted">
-                    Output: <code>{testCase.expectedOutput}</code>
-                  </p>
-                </div>
-              ))}
-            </section>
-          )}
+          {problem.testCases.length > 0 && <ProblemExamples examples={problem.testCases} />}
         </div>
       )}
 

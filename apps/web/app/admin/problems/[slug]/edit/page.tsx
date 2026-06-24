@@ -6,6 +6,7 @@ import Navbar from '@/components/layout/Navbar'
 import TestCaseEditor from '@/components/admin/TestCaseEditor'
 import { useToast } from '@/components/ui/Toast'
 import LazyMarkdown from '@/components/ui/LazyMarkdown'
+import ProblemExamples from '@/components/ui/ProblemExamples'
 
 interface TestCase { input: string; expectedOutput: string; isSample: boolean }
 
@@ -102,27 +103,8 @@ export default function EditProblemPage({ params }: { params: { slug: string } }
             <div className="section-title">Preview</div>
             <div className="markdown-preview">
               <h2>{title}</h2>
-              <LazyMarkdown>{description}</LazyMarkdown>
-              {sampleTestCases.length > 0 && (
-                <section className="problem-examples">
-                  {sampleTestCases.map((testCase, index) => (
-                    <div key={index} className="problem-example">
-                      <h3>Sample {index + 1}</h3>
-                      <pre id={`admin-sample-${index + 1}`}>{testCase.input}</pre>
-                      <button
-                        className="copy-btn ghost-btn"
-                        type="button"
-                        onClick={() => navigator.clipboard?.writeText(testCase.input)}
-                      >
-                        Copy
-                      </button>
-                      <p className="muted">
-                        Output: <code>{testCase.expectedOutput}</code>
-                      </p>
-                    </div>
-                  ))}
-                </section>
-              )}
+              <LazyMarkdown className="problem-md">{description}</LazyMarkdown>
+              {sampleTestCases.length > 0 && <ProblemExamples examples={sampleTestCases} />}
             </div>
           </div>
         </div>

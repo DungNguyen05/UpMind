@@ -16,6 +16,11 @@ export default function Navbar({ compact }: NavbarProps) {
 
   const initials = session?.user?.username?.slice(0, 2).toUpperCase() ?? '??'
 
+  async function handleSignOut() {
+    await signOut({ redirect: false })
+    window.location.assign('/login')
+  }
+
   return (
     <header className={compact ? 'topbar compact-topbar' : 'topbar'}>
       <div className="nav-left">
@@ -63,7 +68,7 @@ export default function Navbar({ compact }: NavbarProps) {
             }}
           >
             <button
-              onClick={() => signOut({ callbackUrl: '/login' })}
+              onClick={handleSignOut}
               style={{
                 display: 'block',
                 width: '100%',

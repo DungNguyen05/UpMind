@@ -2,6 +2,7 @@
 
 import { useRef, useState, useEffect, forwardRef, useImperativeHandle } from 'react'
 import MonacoEditor, { OnMount } from '@monaco-editor/react'
+import { formatCppCode } from '@/lib/formatCpp'
 
 const CPP_TEMPLATE = `#include <bits/stdc++.h>
 using namespace std;
@@ -148,7 +149,24 @@ const Editor = forwardRef<EditorRef, Props>(function Editor(
   }
 
   function handleFormat() {
-    editorRef.current?.getAction('editor.action.formatDocument')?.run()
+    const editor = editorRef.current
+    const model = editor?.getModel()
+    if (!editor || !model) return
+
+    const formattedCode = formatCppCode(model.getValue(), model.getOptions().tabSize)
+    if (formattedCode === model.getValue()) return
+
+    editor.pushUndoStop()
+    editor.executeEdits('format-cpp', [
+      {
+        range: model.getFullModelRange(),
+        text: formattedCode,
+        forceMoveMarkers: true,
+      },
+    ])
+    editor.pushUndoStop()
+    setCode(formattedCode)
+    syncCode(formattedCode, true)
   }
 
   return (
@@ -159,7 +177,7 @@ const Editor = forwardRef<EditorRef, Props>(function Editor(
           <span className="pill">C++17</span>
         </div>
         <div className="row">
-          <button className="ghost-btn icon-btn" title="Format code" onClick={handleFormat}>{'{ }'}</button>
+          <button type="button" className="ghost-btn icon-btn" title="Format code" onClick={handleFormat}>{'{ }'}</button>
           <button className="ghost-btn icon-btn" title="Reset code" onClick={handleReset}>↻</button>
           <button
             className={`secondary-btn mentor-toggle${aiOpen ? ' active' : ''}`}
