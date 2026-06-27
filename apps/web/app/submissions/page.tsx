@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Navbar from '@/components/layout/Navbar'
 import Badge from '@/components/ui/Badge'
-import { getMentorNextStep } from '@/lib/mentor'
 import { formatRelativeTime } from '@/lib/time'
 
 interface Submission {
@@ -83,7 +82,7 @@ export default function SubmissionsPage() {
                   <th>Verdict</th>
                   <th>Runtime</th>
                   <th>Memory</th>
-                  <th>Mentor next step</th>
+                  <th>AI Review</th>
                   <th></th>
                 </tr>
               </thead>
@@ -101,7 +100,11 @@ export default function SubmissionsPage() {
                     <td><Badge verdict={submission.verdict} /></td>
                     <td className="mono">{submission.runtimeMs != null ? `${submission.runtimeMs}ms` : '—'}</td>
                     <td className="mono">{submission.memoryKb != null ? `${Math.round(submission.memoryKb / 1024)}MB` : '—'}</td>
-                    <td className="mentor-next">{getMentorNextStep(submission)}</td>
+                    <td className="muted" style={{ fontSize: 13, maxWidth: 220 }}>
+                      {submission.aiFeedback?.content
+                        ? submission.aiFeedback.content.replace(/^[-*#\s]+/, '').split('\n').find(Boolean)?.slice(0, 80) ?? '—'
+                        : '—'}
+                    </td>
                     <td>
                       <Link href={`/submissions/${submission.id}`} prefetch={false} className="ghost-btn" style={{ fontSize: 12 }}>
                         Review với AI

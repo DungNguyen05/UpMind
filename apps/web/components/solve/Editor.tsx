@@ -49,7 +49,6 @@ interface Props {
   problemSlug: string
   aiOpen?: boolean
   onToggleAi?: () => void
-  onWalkthroughLine?: (lineNumber: number, lineContent: string, fullCode: string) => void
   onCodeChange?: (code: string) => void
 }
 
@@ -58,7 +57,7 @@ export interface EditorRef {
 }
 
 const Editor = forwardRef<EditorRef, Props>(function Editor(
-  { problemSlug, aiOpen, onToggleAi, onWalkthroughLine, onCodeChange },
+  { problemSlug, aiOpen, onToggleAi, onCodeChange },
   ref
 ) {
   const editorRef = useRef<any>(null)
@@ -129,15 +128,6 @@ const Editor = forwardRef<EditorRef, Props>(function Editor(
     monaco.editor.setTheme('cp-dark')
     editor.updateOptions({ fontFamily: "'JetBrains Mono', monospace", fontSize: 14 })
 
-    editor.onMouseDown((e) => {
-      if (e.target.type === 2 /* GUTTER_GLYPH_MARGIN */ || e.target.type === 3 /* GUTTER_LINE_NUMBERS */) {
-        const lineNumber = e.target.position?.lineNumber
-        if (lineNumber && onWalkthroughLine) {
-          const lineContent = editor.getModel()?.getLineContent(lineNumber) ?? ''
-          onWalkthroughLine(lineNumber, lineContent, editor.getValue())
-        }
-      }
-    })
   }
 
   function handleReset() {
@@ -206,7 +196,7 @@ const Editor = forwardRef<EditorRef, Props>(function Editor(
             hideCursorInOverviewRuler: true,
             scrollBeyondLastLine: false,
             lineNumbers: 'on',
-            glyphMargin: true,
+            glyphMargin: false,
             wordWrap: 'off',
             tabSize: 4,
           }}

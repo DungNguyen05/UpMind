@@ -28,7 +28,7 @@ async function callLLM(systemPrompt, userMessage) {
   if (provider === 'anthropic') {
     const response = await client.messages.create({
       model,
-      max_tokens: 1024,
+      max_tokens: 300,
       system: systemPrompt,
       messages: [{ role: 'user', content: userMessage }],
     })
@@ -36,52 +36,45 @@ async function callLLM(systemPrompt, userMessage) {
   }
   const response = await client.chat.completions.create({
     model,
-    max_tokens: 1024,
+    max_tokens: 300,
     messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: userMessage }],
   })
   return response.choices[0].message.content
 }
 
 function buildPrompt(data) {
-  const base = `Bạn là AI Mentor cho học sinh học C++ Competitive Programming.
-Trả lời bằng tiếng Việt, format Markdown.
-Luôn chia phản hồi thành các mục ngắn:
-1. Root cause
-2. Patch đề xuất
-3. Test nên thử
-4. Câu hỏi follow-up
-Không đưa full lời giải hoàn chỉnh; chỉ đưa snippet nhỏ khi thật cần để sửa lỗi.`
+  const base = `Nhận xét code C++ bằng tiếng Việt. Tối đa 3 câu. Không dùng tiêu đề, không đánh số, không bullet. Nói thẳng vào vấn đề.`
 
   switch (data.verdict) {
+    case 'AC':
+      return {
+        system: `${base} Code đã AC — nhận xét kỹ thuật hoặc style. Khen nếu tốt, chỉ một điểm cải thiện nếu có.`,
+        user: `Bài: ${data.problemDescription}\n\nCode:\n\`\`\`cpp\n${data.code}\n\`\`\``,
+      }
     case 'WA':
       return {
-        system: `${base}\nVới Wrong Answer: chỉ ra logic sai và test tái hiện, không viết lại toàn bộ lời giải.`,
-        user: `Bài:\n${data.problemDescription}\n\nCode:\n\`\`\`cpp\n${data.code}\n\`\`\`\n\nInput bị sai:\n${data.failedTestInput}\n\nOutput của code:\n${data.failedTestOutput}`,
+        system: `${base} Code bị WA — chỉ đúng chỗ sai dựa trên test, giải thích tại sao, một gợi ý fix.`,
+        user: `Bài: ${data.problemDescription}\n\nCode:\n\`\`\`cpp\n${data.code}\n\`\`\`\n\nInput sai:\n\`\`\`\n${data.failedTestInput}\n\`\`\`\nOutput code:\n\`\`\`\n${data.failedTestOutput}\n\`\`\``,
       }
     case 'TLE':
       return {
-        system: `${base}\nVới TLE: chỉ ra đoạn/chỗ có khả năng gây chậm, gợi ý giảm độ phức tạp.`,
-        user: `Bài:\n${data.problemDescription}\n\nCode:\n\`\`\`cpp\n${data.code}\n\`\`\`\n\nTime limit: ${data.timeLimitMs}ms`,
+        system: `${base} Code bị TLE (limit ${data.timeLimitMs}ms) — chỉ đoạn chậm nhất, O(?), một hướng tối ưu.`,
+        user: `Bài: ${data.problemDescription}\n\nCode:\n\`\`\`cpp\n${data.code}\n\`\`\``,
       }
     case 'MLE':
       return {
-        system: `${base}\nVới MLE: chỉ ra cấu trúc dữ liệu hoặc cấp phát có khả năng dùng quá nhiều bộ nhớ.`,
-        user: `Bài:\n${data.problemDescription}\n\nCode:\n\`\`\`cpp\n${data.code}\n\`\`\``,
+        system: `${base} Code bị MLE — chỉ cấu trúc ngốn bộ nhớ nhất, một cách giảm.`,
+        user: `Bài: ${data.problemDescription}\n\nCode:\n\`\`\`cpp\n${data.code}\n\`\`\``,
       }
     case 'RE':
       return {
-        system: `${base}\nVới Runtime Error: phân tích out-of-bound, chia cho 0, recursion sâu, overflow hoặc input edge case.`,
-        user: `Bài:\n${data.problemDescription}\n\nCode:\n\`\`\`cpp\n${data.code}\n\`\`\``,
+        system: `${base} Code bị RE — xác định nguyên nhân, chỉ dòng nghi ngờ, gợi ý fix.`,
+        user: `Bài: ${data.problemDescription}\n\nCode:\n\`\`\`cpp\n${data.code}\n\`\`\``,
       }
     case 'CE':
       return {
-        system: `${base}\nVới Compile Error: giải thích lỗi compile đầu tiên rõ ràng cho học sinh.`,
-        user: `Code:\n\`\`\`cpp\n${data.code}\n\`\`\`\n\nLỗi compile:\n${data.compileError}`,
-      }
-    case 'AC':
-      return {
-        system: `${base}\nVới Accepted: review code style C++, readability, edge cases và cách chứng minh.`,
-        user: `Bài:\n${data.problemDescription}\n\nCode:\n\`\`\`cpp\n${data.code}\n\`\`\``,
+        system: `${base} Code bị CE — dịch lỗi sang tiếng Việt thường, chỉ dòng lỗi, cách sửa.`,
+        user: `Code:\n\`\`\`cpp\n${data.code}\n\`\`\`\n\nLỗi:\n\`\`\`\n${data.compileError}\n\`\`\``,
       }
     default:
       return null

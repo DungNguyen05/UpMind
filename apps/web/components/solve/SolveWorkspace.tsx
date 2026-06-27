@@ -27,12 +27,6 @@ interface UserSubmission {
   language: string
 }
 
-interface WalkthroughLine {
-  lineNumber: number
-  lineContent: string
-  fullCode: string
-}
-
 interface Props {
   problem: Problem
   userSubmissions: UserSubmission[]
@@ -78,12 +72,14 @@ const AiPanel = dynamic(() => import('./AiPanel'), {
       <div className="mentor-head">
         <div>
           <span className="kicker">AI Mentor</span>
-          <h2>Loading Mentor...</h2>
+          <h2>Code Review</h2>
         </div>
       </div>
-      <div className="ai-panel mentor-scroll">
-        <div className="skeleton" style={{ height: 92, marginBottom: 12 }} />
-        <div className="skeleton" style={{ height: 160 }} />
+      <div className="mentor-scroll">
+        <div className="ai-panel">
+          <div className="skeleton" style={{ height: 52, marginBottom: 12 }} />
+          <div className="skeleton" style={{ height: 200 }} />
+        </div>
       </div>
     </div>
   ),
@@ -99,20 +95,9 @@ export default function SolveWorkspace({ problem, userSubmissions, initialLatest
   const aiPaneRef = useRef<HTMLDivElement>(null)
   const [submissions, setSubmissions] = useState(userSubmissions)
   const [latestSubmission, setLatestSubmission] = useState<MentorSubmission | null>(initialLatestSubmission)
-  const [walkthroughLine, setWalkthroughLine] = useState<WalkthroughLine | null>(null)
-  const [currentCode, setCurrentCode] = useState('')
   const [aiOpen, setAiOpen] = useState(false)
   const [editorBooted, setEditorBooted] = useState(false)
   const [paneWidths, setPaneWidths] = useState<{ problem?: number; ai?: number }>({})
-
-  const handleCodeChange = useCallback((code: string) => {
-    setCurrentCode(code)
-  }, [])
-
-  const handleWalkthroughLine = useCallback((lineNumber: number, lineContent: string, fullCode: string) => {
-    setWalkthroughLine({ lineNumber, lineContent, fullCode })
-    setAiOpen(true)
-  }, [])
 
   const handleSubmissionUpdate = useCallback((submission: MentorSubmission) => {
     setLatestSubmission(submission)
@@ -311,8 +296,6 @@ export default function SolveWorkspace({ problem, userSubmissions, initialLatest
             problemSlug={problem.slug}
             aiOpen={aiOpen}
             onToggleAi={() => setAiOpen((open) => !open)}
-            onCodeChange={handleCodeChange}
-            onWalkthroughLine={handleWalkthroughLine}
           />
         ) : (
           <EditorPlaceholder />
@@ -329,11 +312,7 @@ export default function SolveWorkspace({ problem, userSubmissions, initialLatest
             />
             <div ref={aiPaneRef} className="solve-pane-wrap ai-pane-wrap">
               <AiPanel
-                problemSlug={problem.slug}
-                problemTitle={problem.title}
                 latestSubmission={latestSubmission}
-                walkthroughLine={walkthroughLine}
-                currentCode={currentCode}
                 mobileOpen={aiOpen}
                 onClose={() => setAiOpen(false)}
               />

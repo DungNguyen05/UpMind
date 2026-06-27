@@ -1,16 +1,8 @@
 'use client'
 
-import { useRef, useState, useEffect } from 'react'
 import Badge from '@/components/ui/Badge'
 import LazyMarkdown from '@/components/ui/LazyMarkdown'
 import { useToast } from '@/components/ui/Toast'
-import { getMentorNextStep, getPatchSuggestion, getReviewFocus, getRootCause } from '@/lib/mentor'
-import { readSseTextStream } from '@/lib/sse'
-
-interface Message {
-  role: 'user' | 'assistant'
-  content: string
-}
 
 interface Submission {
   id: string
@@ -27,189 +19,94 @@ interface Submission {
   aiFeedback: { content: string; feedbackType: string } | null
 }
 
-interface Props {
-  submission: Submission
+const VERDICT_LABEL: Record<string, string> = {
+  AC: 'Accepted',
+  WA: 'Wrong Answer',
+  TLE: 'Time Limit Exceeded',
+  MLE: 'Memory Limit Exceeded',
+  RE: 'Runtime Error',
+  CE: 'Compile Error',
 }
 
-const PROMPTS = [
-  { label: 'Trace test lỗi', prompt: 'Trace từng bước trên test lỗi và chỉ ra biến nào bắt đầu sai.' },
-  { label: 'Patch nhỏ nhất', prompt: 'Gợi ý patch nhỏ nhất để sửa submission này, đừng đưa full code.' },
-  { label: 'Test tương tự', prompt: 'Tạo thêm 3 test nhỏ cùng kiểu lỗi để em tự kiểm tra.' },
-]
-
-function memoryText(memoryKb: number | null) {
-  return memoryKb != null ? `${Math.round(memoryKb / 1024)}MB` : '—'
+function fmtMs(ms: number | null) {
+  return ms != null ? `${ms} ms` : '—'
 }
 
-export default function SubmissionMentorReview({ submission }: Props) {
+function fmtMem(kb: number | null) {
+  return kb != null ? `${Math.round(kb / 1024)} MB` : '—'
+}
+
+export default function SubmissionMentorReview({ submission }: { submission: Submission }) {
   const toast = useToast()
-  const [messages, setMessages] = useState<Message[]>([])
-  const [input, setInput] = useState('')
-  const [streaming, setStreaming] = useState(false)
-  const messagesEndRef = useRef<HTMLDivElement>(null)
-  const inputRef = useRef<HTMLTextAreaElement>(null)
-
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages])
-
-  function applyPrompt(prompt: string) {
-    setInput(prompt)
-    requestAnimationFrame(() => inputRef.current?.focus())
-  }
-
-  async function sendMessage() {
-    if (!input.trim() || streaming) return
-    const userMessage: Message = { role: 'user', content: input.trim() }
-    const nextMessages = [...messages, userMessage]
-    setMessages([...nextMessages, { role: 'assistant', content: '' }])
-    setInput('')
-    setStreaming(true)
-
-    try {
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          problemSlug: submission.problem.slug,
-          submissionId: submission.id,
-          messages: nextMessages,
-        }),
-      })
-      if (!response.ok) throw new Error('Chat failed')
-      if (!response.body) return
-      await readSseTextStream(response.body, (text) => {
-        setMessages((prev) => {
-          const copy = [...prev]
-          copy[copy.length - 1] = { role: 'assistant', content: text }
-          return copy
-        })
-      })
-    } catch {
-      setMessages((prev) => {
-        const copy = [...prev]
-        copy[copy.length - 1] = { role: 'assistant', content: 'Mentor chưa phản hồi được lúc này. Kiểm tra đăng nhập hoặc cấu hình AI rồi thử lại.' }
-        return copy
-      })
-    } finally {
-      setStreaming(false)
-    }
-  }
-
-  const canCopyTest = Boolean(submission.failedTestInput && submission.failedTestInput !== '(hidden)')
+  const canCopy = Boolean(submission.failedTestInput && submission.failedTestInput !== '(hidden)')
+  const showEvidence = submission.verdict !== 'AC' && (submission.compileError || submission.failedTestInput)
 
   return (
     <aside className="panel mentor-review">
       <div className="panel-head">
         <div>
-          <span className="kicker">AI Mentor Review</span>
-          <h2>{getReviewFocus(submission.verdict)}</h2>
+          <span className="kicker">AI Mentor</span>
+          <h2>Code Review</h2>
         </div>
         <Badge verdict={submission.verdict} />
       </div>
 
-      <div className="review-hero">
-        <span className="badge pending">Mentor next step</span>
-        <strong>{getMentorNextStep(submission)}</strong>
-        <p className="muted">Review này nối verdict, code đã nộp, test lỗi và feedback AI để ưu tiên bước sửa tiếp theo.</p>
-      </div>
-
-      <div className="review-grid">
-        <div className="review-card">
-          <span className="kicker">Root cause</span>
-          <p>{getRootCause(submission)}</p>
+      <div className="verdict-card" style={{ marginBottom: 16 }}>
+        <div className="verdict-card-left">
+          <Badge verdict={submission.verdict} />
+          <span className="verdict-label">
+            {VERDICT_LABEL[submission.verdict] ?? submission.verdict}
+          </span>
         </div>
-        <div className="review-card">
-          <span className="kicker">Runtime / Memory</span>
-          <p className="mono">{submission.runtimeMs != null ? `${submission.runtimeMs}ms` : '—'} · {memoryText(submission.memoryKb)}</p>
+        <div className="verdict-metrics">
+          <span>{fmtMs(submission.runtimeMs)}</span>
+          <span>·</span>
+          <span>{fmtMem(submission.memoryKb)}</span>
         </div>
       </div>
 
-      <section className="mentor-section">
-        <h3>Patch Mentor đề xuất</h3>
+      {submission.aiFeedback?.content ? (
         <div className="mentor-answer">
-          {submission.aiFeedback?.content ? (
-            <LazyMarkdown>{submission.aiFeedback.content}</LazyMarkdown>
-          ) : (
-            getPatchSuggestion(submission)
-          )}
+          <LazyMarkdown>{submission.aiFeedback.content}</LazyMarkdown>
         </div>
-      </section>
+      ) : (
+        <p className="muted" style={{ fontSize: 14 }}>
+          AI feedback chưa khả dụng. Kiểm tra cấu hình <code>LLM_API_KEY</code>.
+        </p>
+      )}
 
-      <section className="mentor-section">
-        <h3>Test tái hiện lỗi</h3>
-        {submission.compileError ? (
-          <pre className="code-block">{submission.compileError}</pre>
-        ) : submission.failedTestInput ? (
-          <div className="test-pack">
-            <pre>{submission.failedTestInput}</pre>
-            {canCopyTest && (
-              <button
-                className="secondary-btn"
-                type="button"
-                onClick={() => {
-                  navigator.clipboard?.writeText(submission.failedTestInput ?? '')
-                  toast('Đã copy test tái hiện lỗi.', 'success')
-                }}
-              >
-                Copy test
-              </button>
-            )}
-          </div>
-        ) : (
-          <p className="muted">Submission này chưa có test lỗi công khai. Hỏi Mentor để tạo test biên tương tự.</p>
-        )}
-        {submission.failedTestOutput && (
-          <div style={{ marginTop: 10 }}>
-            <div className="muted" style={{ fontSize: 12, marginBottom: 4 }}>Output của code</div>
-            <pre className="code-block">{submission.failedTestOutput}</pre>
-          </div>
-        )}
-      </section>
-
-      <section className="mentor-section">
-        <h3>Chat follow-up</h3>
-        <div className="quick-prompts review-prompts">
-          {PROMPTS.map((item) => (
-            <button key={item.label} type="button" onClick={() => applyPrompt(item.prompt)}>
-              {item.label}
-            </button>
-          ))}
+      {showEvidence && (
+        <div style={{ marginTop: 20 }}>
+          <div className="evidence-label">Test lỗi</div>
+          {submission.compileError ? (
+            <pre className="code-block">{submission.compileError}</pre>
+          ) : submission.failedTestInput ? (
+            <>
+              <div className="test-pack">
+                <pre>{submission.failedTestInput}</pre>
+                {canCopy && (
+                  <button
+                    className="secondary-btn"
+                    type="button"
+                    onClick={() => {
+                      navigator.clipboard?.writeText(submission.failedTestInput ?? '')
+                      toast('Đã copy input lỗi.', 'success')
+                    }}
+                  >
+                    Copy
+                  </button>
+                )}
+              </div>
+              {submission.failedTestOutput && (
+                <div style={{ marginTop: 10 }}>
+                  <div className="muted" style={{ fontSize: 12, marginBottom: 4 }}>Output của code</div>
+                  <pre className="code-block">{submission.failedTestOutput}</pre>
+                </div>
+              )}
+            </>
+          ) : null}
         </div>
-
-        <div className="message-list">
-          {messages.length === 0 && (
-            <div className="message ai">
-              <strong>Mentor:</strong> Lần nộp này đang được gắn với code, verdict và test lỗi. Hỏi tiếp để debug sâu hơn.
-            </div>
-          )}
-          {messages.map((message, index) => (
-            <div key={index} className={`message ${message.role === 'assistant' ? 'ai' : 'user'}`}>
-              {message.role === 'assistant' ? <LazyMarkdown>{message.content || '...'}</LazyMarkdown> : message.content}
-            </div>
-          ))}
-          <div ref={messagesEndRef} />
-        </div>
-
-        <div className="chat-input">
-          <textarea
-            ref={inputRef}
-            className="textarea"
-            placeholder="Hỏi thêm Mentor về submission này..."
-            value={input}
-            onChange={(event) => setInput(event.target.value)}
-            onKeyDown={(event) => {
-              if (event.key === 'Enter' && !event.shiftKey) {
-                event.preventDefault()
-                sendMessage()
-              }
-            }}
-          />
-          <button className="primary-btn" type="button" onClick={sendMessage} disabled={streaming}>
-            {streaming ? '...' : 'Gửi'}
-          </button>
-        </div>
-      </section>
+      )}
     </aside>
   )
 }
